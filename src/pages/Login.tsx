@@ -1,15 +1,34 @@
 import React, { useState, type FormEvent } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+// Removed: import "bootstrap/dist/css/bootstrap.min.css"; 
+// Bootstrap CSS should be loaded via a CDN link in the main HTML file.
+import { useSelector, useDispatch } from 'react-redux';
+import { setUsername, setPassword } from '../features/auth/authSlice'; 
+import { loginUser } from '../features/auth/authThunks'; 
+import { type RootState, type AppDispatch } from '../app/store';
 
 export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  
+  // Select state from Redux store
+  const { username, password, isLoading, error, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log({ username, password });
+    
+    // Dispatch the ASYNC THUNK, passing the current form data
+    dispatch(loginUser({ username, password }));
   };
+  
+  // NOTE: In a real app, if isAuthenticated is true, you would redirect the user here.
+  if (isAuthenticated) {
+    // Simple placeholder for successful login display
+    return (
+      <div className="d-flex justify-content-center align-items-center bg-success text-white" style={{ minHeight: "100vh" }}>
+        <h1 className="fw-bold">Login Successful! Redirecting...</h1>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -46,6 +65,13 @@ export default function Login() {
             <p className="text-muted small mb-0">Sign in to continue</p>
           </div>
 
+          {/* Display Redux Error Message */}
+          {error && (
+            <div className="alert alert-danger small" role="alert">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={onSubmit}>
             <div className="mb-3">
               <label htmlFor="username" className="form-label">
@@ -55,11 +81,14 @@ export default function Login() {
                 type="text"
                 id="username"
                 className="form-control"
+                // Redux State: value={username}
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                // Redux Dispatch: onChange calls setUsername action
+                onChange={(e) => dispatch(setUsername(e.target.value))}
                 placeholder="nuwantha"
                 autoComplete="username"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -71,20 +100,25 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 id="password"
                 className="form-control pe-5"
+                // Redux State: value={password}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                // Redux Dispatch: onChange calls setPassword action
+                onChange={(e) => dispatch(setPassword(e.target.value))}
                 placeholder="••••••••"
                 autoComplete="current-password"
                 required
+                disabled={isLoading}
               />
-                <button
-                    type="button"
-                    className="btn btn-sm btn-link position-absolute end-0 translate-middle-y me-2 text-decoration-none"
-                    style={{ top: '75%' }}
-                    onClick={() => setShowPassword((s) => !s)}
-                >
-                    {showPassword ? "Hide" : "Show"}
-                </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-link position-absolute end-0 translate-middle-y me-2 text-dark"
+                // Adjusted top style for better vertical alignment
+                style={{ top: '75%' }} 
+                onClick={() => setShowPassword((s) => !s)}
+                disabled={isLoading}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
             </div>
 
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -93,12 +127,13 @@ export default function Login() {
                   type="checkbox"
                   className="form-check-input"
                   id="rememberMe"
+                  disabled={isLoading}
                 />
                 <label className="form-check-label" htmlFor="rememberMe">
                   Remember me
                 </label>
               </div>
-              <a href="#" className="small text-decoration-none text-dark">
+              <a href="#" className="small text-decoration-none text-dark" onClick={(e) => e.preventDefault()}>
                 Forgot password?
               </a>
             </div>
@@ -107,8 +142,10 @@ export default function Login() {
               type="submit"
               className="btn btn-dark w-100 fw-semibold"
               style={{ padding: "10px" }}
+              disabled={isLoading} 
             >
-              Sign in
+              {/* Show loading text when the thunk is running */}
+              {isLoading ? 'Signing In...' : 'Sign in'} 
             </button>
           </form>
 
