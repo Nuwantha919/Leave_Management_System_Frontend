@@ -1,7 +1,8 @@
-import React, { useState, type FormEvent } from "react";
-// Removed: import "bootstrap/dist/css/bootstrap.min.css"; 
-// Bootstrap CSS should be loaded via a CDN link in the main HTML file.
+// src/pages/Login.tsx (UPDATED)
+
+import React, { useState, type FormEvent, useEffect } from "react"; // <-- Added useEffect
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom'; // <-- NEW
 import { setUsername, setPassword } from '../features/auth/authSlice'; 
 import { loginUser } from '../features/auth/authThunks'; 
 import { type RootState, type AppDispatch } from '../app/store';
@@ -9,27 +10,35 @@ import { type RootState, type AppDispatch } from '../app/store';
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate(); // <-- NEW: Hook for navigation
   
   // Select state from Redux store
   const { username, password, isLoading, error, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
+  // Effect to handle navigation on successful login
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Navigate to the dashboard upon successful login
+      navigate('/dashboard', { replace: true }); 
+    }
+    // Dependency array includes isAuthenticated to run the effect when its value changes
+  }, [isAuthenticated, navigate]); 
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    
-    // Dispatch the ASYNC THUNK, passing the current form data
     dispatch(loginUser({ username, password }));
   };
   
-  // NOTE: In a real app, if isAuthenticated is true, you would redirect the user here.
+  // NOTE: If isAuthenticated is true, the useEffect handles the redirect, so we don't render the form
   if (isAuthenticated) {
-    // Simple placeholder for successful login display
     return (
-      <div className="d-flex justify-content-center align-items-center bg-success text-white" style={{ minHeight: "100vh" }}>
-        <h1 className="fw-bold">Login Successful! Redirecting...</h1>
+      <div className="d-flex justify-content-center align-items-center bg-info text-white" style={{ minHeight: "100vh" }}>
+        <h1 className="fw-bold">Login Successful! Redirecting to Dashboard...</h1>
       </div>
     );
   }
 
+  // ... (The rest of the component remains the same, showing the login form)
   return (
     <div
       className="bg-white d-flex justify-content-center align-items-center"
@@ -48,6 +57,7 @@ export default function Login() {
         }}
       >
         <div className="card-body p-4">
+            {/* ... (Error display and form code remains the same) */}
           <div className="text-center mb-4">
             <div
               className="d-inline-flex align-items-center justify-content-center bg-dark text-white rounded mb-2"
@@ -65,7 +75,6 @@ export default function Login() {
             <p className="text-muted small mb-0">Sign in to continue</p>
           </div>
 
-          {/* Display Redux Error Message */}
           {error && (
             <div className="alert alert-danger small" role="alert">
               {error}
@@ -112,7 +121,6 @@ export default function Login() {
               <button
                 type="button"
                 className="btn btn-sm btn-link position-absolute end-0 translate-middle-y me-2 text-dark"
-                // Adjusted top style for better vertical alignment
                 style={{ top: '75%' }} 
                 onClick={() => setShowPassword((s) => !s)}
                 disabled={isLoading}
@@ -144,7 +152,6 @@ export default function Login() {
               style={{ padding: "10px" }}
               disabled={isLoading} 
             >
-              {/* Show loading text when the thunk is running */}
               {isLoading ? 'Signing In...' : 'Sign in'} 
             </button>
           </form>
