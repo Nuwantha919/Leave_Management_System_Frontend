@@ -3,7 +3,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { type RootState } from '../app/store';
+import { type RootState } from '../store/store';
 
 /**
  * A wrapper component that checks for user authentication status.

@@ -1,7 +1,7 @@
 import type { 
   LoginRequestData, 
   LoginResponseData 
-} from '../features/auth/AuthTypes'; 
+} from './../store/auth/AuthTypes'; 
 
 const BASE_URL = 'http://localhost:8080'; 
 

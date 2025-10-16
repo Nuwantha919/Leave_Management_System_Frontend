@@ -1,15 +1,12 @@
-// src/features/auth/authThunks.ts
-
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { login } from '../../services/authService'; 
-import type { // <-- FIX: Using 'import type' for all type definitions
+import type { 
   RootState 
-} from '../../app/store'; // Ensure RootState is defined in store.ts
+} from '../../store/store'; 
 import type { 
   LoginRequestData, 
   UserInfo 
 } from './AuthTypes'; 
-import axios from 'axios';
 
 
 /**

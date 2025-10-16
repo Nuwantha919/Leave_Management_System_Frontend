@@ -1,3 +1,0 @@
- authSlice.ts      <-- Contains the state, reducers, and actions (The "Slice")
- authThunks.ts     <-- Contains async login/logout logic (The "Actions" for API)
- AuthTypes.ts      <-- (Optional) Type definitions

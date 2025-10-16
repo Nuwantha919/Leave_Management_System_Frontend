@@ -3,9 +3,9 @@
 import React, { useState, type FormEvent, useEffect } from "react"; // <-- Added useEffect
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom'; // <-- NEW
-import { setUsername, setPassword } from '../features/auth/authSlice'; 
-import { loginUser } from '../features/auth/authThunks'; 
-import { type RootState, type AppDispatch } from '../app/store';
+import { setUsername, setPassword } from '../../store/auth/authSlice'; 
+import { loginUser } from '../../store/auth/authThunks'; 
+import { type RootState, type AppDispatch } from '../../store/store';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);

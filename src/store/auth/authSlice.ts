@@ -1,8 +1,6 @@
-// src/features/auth/authSlice.ts
-
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { loginUser } from './authThunks'; 
-import type { AuthState, UserInfo } from './AuthTypes'; // <-- FIX: Using 'import type'
+import type { AuthState, UserInfo } from './AuthTypes'; 
 
 // Function to check initial state from storage
 const getToken = () => localStorage.getItem('authToken');
@@ -10,7 +8,7 @@ const getToken = () => localStorage.getItem('authToken');
 const initialState: AuthState = {
   // Form input state (used by Login.tsx)
   username: '', 
-  password: '', // <-- FIX: Correctly included in initial state
+  password: '', 
   
   // Auth status state
   token: getToken(),

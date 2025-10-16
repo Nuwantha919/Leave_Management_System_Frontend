@@ -1,14 +1,8 @@
-/**
- * Interface for the login credentials sent to the Spring Boot backend.
- */
 export interface LoginRequestData {
   username: string;
   password: string;
 }
 
-/**
- * Interface for the successful response received from the Spring Boot backend.
- */
 export interface LoginResponseData {
   token: string;
   username: string;
@@ -32,7 +26,7 @@ export interface UserInfo {
  */
 export interface AuthState {
   username: string;
-  password: string; // <-- FIX: Added 'password' to AuthState
+  password: string; 
   
   token: string | null;
   role: string | null;
