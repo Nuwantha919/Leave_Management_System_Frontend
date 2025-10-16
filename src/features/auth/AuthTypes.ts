@@ -1,15 +1,43 @@
-export interface AuthState {
-  username: string;
-  password: string; // Used temporarily for form input
-  token: string | null;
-  user: { id: number; name: string; role: string } | null;
-  isLoading: boolean;
-  error: string | null;
-  isAuthenticated: boolean;
-}
-
-// Interface for the payload when submitting login credentials
-export interface LoginCredentials {
+/**
+ * Interface for the login credentials sent to the Spring Boot backend.
+ */
+export interface LoginRequestData {
   username: string;
   password: string;
+}
+
+/**
+ * Interface for the successful response received from the Spring Boot backend.
+ */
+export interface LoginResponseData {
+  token: string;
+  username: string;
+  role: string;
+  message: string;
+}
+
+/**
+ * Interface for the user details payload (what the Thunk returns).
+ */
+export interface UserInfo {
+  username: string;
+  role: string;
+  token: string;
+}
+
+/**
+ * Interface for the complete authentication state stored in the Redux slice.
+ * Note: 'username' and 'password' are kept here to manage the form inputs
+ * in the Login component via Redux (as you currently have it).
+ */
+export interface AuthState {
+  username: string;
+  password: string; // <-- FIX: Added 'password' to AuthState
+  
+  token: string | null;
+  role: string | null;
+  
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  error: string | null;
 }

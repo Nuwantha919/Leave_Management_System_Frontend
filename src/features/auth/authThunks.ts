@@ -1,39 +1,40 @@
+// src/features/auth/authThunks.ts
+
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { type LoginCredentials } from './AuthTypes'; // <-- FIX: Use 'type' keyword
+import { login } from '../../services/authService'; 
+import type { // <-- FIX: Using 'import type' for all type definitions
+  RootState 
+} from '../../app/store'; // Ensure RootState is defined in store.ts
+import type { 
+  LoginRequestData, 
+  UserInfo 
+} from './AuthTypes'; 
 
-// Placeholder for API client (e.g., axios)
-// import api from '../../services/api'; 
 
-// Define the async thunk for the login process
-export const loginUser = createAsyncThunk(
-  // Action type prefix: 'auth/loginUser'
-  'auth/loginUser',
-  
-  // The payload creator function
-  async (credentials: LoginCredentials, { rejectWithValue }) => {
+/**
+ * Async Thunk to handle the user login process.
+ */
+export const loginUser = createAsyncThunk<
+  UserInfo,                            // Success payload type
+  LoginRequestData,                    // Argument type
+  { rejectValue: string, state: RootState } // ThunkAPI config
+>(
+  'auth/login',
+  async (credentials, { rejectWithValue }) => {
     try {
-      // --- START: Replace this simulated API call with your actual backend call ---
-      console.log("Attempting to log in with:", credentials);
-      
-      // Simulate an API delay
-      await new Promise(resolve => setTimeout(resolve, 1000)); 
-      
-      if (credentials.username === 'test' && credentials.password === 'password') {
-        // Simulated successful response
-        return {
-          token: 'fake-jwt-token-12345',
-          user: { id: 1, name: 'Test User', role: 'Employee' }
-        };
-      } else {
-        // Simulated authentication failure
-        throw new Error('Invalid username or password.');
-      }
-      // --- END: Simulated API call ---
+      const responseData = await login(credentials);
+
+      const user: UserInfo = {
+        username: responseData.username,
+        role: responseData.role,
+        token: responseData.token,
+      };
+
+      return user; 
 
     } catch (error) {
-      // Use rejectWithValue to pass the error message to the rejected action
-      const errorMessage = (error instanceof Error) ? error.message : 'Login failed due to network error.';
-      return rejectWithValue(errorMessage);
+      const message = error instanceof Error ? error.message : 'An unknown login error occurred.';
+      return rejectWithValue(message); 
     }
   }
 );

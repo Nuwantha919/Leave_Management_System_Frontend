@@ -1,62 +1,85 @@
+// src/features/auth/authSlice.ts
+
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { type AuthState } from './AuthTypes';
-import { loginUser } from './authThunks'; // Import the thunk for type safety
+import { loginUser } from './authThunks'; 
+import type { AuthState, UserInfo } from './AuthTypes'; // <-- FIX: Using 'import type'
+
+// Function to check initial state from storage
+const getToken = () => localStorage.getItem('authToken');
 
 const initialState: AuthState = {
-  username: '',
-  password: '',
-  token: null,
-  user: null,
+  // Form input state (used by Login.tsx)
+  username: '', 
+  password: '', // <-- FIX: Correctly included in initial state
+  
+  // Auth status state
+  token: getToken(),
+  role: null,
+  
+  // Derived state
+  isAuthenticated: !!getToken(),
   isLoading: false,
   error: null,
-  isAuthenticated: false,
 };
 
-const authSlice = createSlice({
+
+export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // Synchronous actions for form input
+    // Reducers to handle form input changes
     setUsername: (state, action: PayloadAction<string>) => {
       state.username = action.payload;
-    },
-    setPassword: (state, action: PayloadAction<string>) => {
-      state.password = action.payload;
-    },
-    // Action to clear state (e.g., after successful login or on logout)
-    resetAuthState: (state) => {
-      state.password = ''; // Clear password on submit
-      state.isLoading = false;
       state.error = null;
     },
-  },
-  // Extra reducers to handle the lifecycle of the async thunk
-  extraReducers: (builder) => {
-    builder
-      // 1. Pending: Login started
-      .addCase(loginUser.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      // 2. Fulfilled: Login succeeded
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = true;
-        state.token = action.payload.token;
-        state.user = action.payload.user;
-        state.username = ''; // Clear form data
-        state.password = ''; // Clear form data
-      })
-      // 3. Rejected: Login failed
-      .addCase(loginUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string; // Payload is the error message
-        state.isAuthenticated = false;
-        state.password = ''; // Clear password on failure
+    setPassword: (state, action: PayloadAction<string>) => { // <-- FIX: This reducer is now valid
+      state.password = action.payload;
+      state.error = null;
+    },
+    logout: (state) => {
+      localStorage.removeItem('authToken');
+      Object.assign(state, initialState, { 
+          token: null, 
+          isAuthenticated: false,
+          username: '',
+          password: ''
       });
+    }
+  },
+  
+  extraReducers: (builder) => {
+    // Handle the PENDING state of the async thunk
+    builder.addCase(loginUser.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+      state.isAuthenticated = false;
+    });
+
+    // Handle the FULFILLED (SUCCESS) state of the async thunk
+    builder.addCase(loginUser.fulfilled, (state, action: PayloadAction<UserInfo>) => {
+      state.isLoading = false;
+      state.isAuthenticated = true;
+      state.error = null;
+      
+      // Update persistent user info
+      state.username = action.payload.username;
+      state.role = action.payload.role;
+      state.token = action.payload.token;
+      
+      state.password = ''; // Clear password from state after success
+    });
+
+    // Handle the REJECTED (FAILURE) state of the async thunk
+    builder.addCase(loginUser.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isAuthenticated = false;
+      // Get the error message from the thunk's rejectWithValue
+      state.error = action.payload as string || 'Login failed, please try again.'; 
+      state.token = null;
+    });
   },
 });
 
-export const { setUsername, setPassword, resetAuthState } = authSlice.actions;
+export const { setUsername, setPassword, logout } = authSlice.actions;
 
 export default authSlice.reducer;
