@@ -19,7 +19,7 @@ export async function login(
     },
     body: JSON.stringify(credentials),
   });
-
+  console.log('Response status:', response.status); // Debug log
   const data = await response.json();
 
   if (!response.ok) {

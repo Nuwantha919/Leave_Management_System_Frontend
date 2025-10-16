@@ -9,6 +9,7 @@ import type {
   LoginRequestData, 
   UserInfo 
 } from './AuthTypes'; 
+import axios from 'axios';
 
 
 /**
@@ -23,7 +24,6 @@ export const loginUser = createAsyncThunk<
   async (credentials, { rejectWithValue }) => {
     try {
       const responseData = await login(credentials);
-
       const user: UserInfo = {
         username: responseData.username,
         role: responseData.role,
