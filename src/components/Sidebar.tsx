@@ -1,12 +1,17 @@
 // src/components/Sidebar.tsx
 import React from 'react';
+import { Link } from 'react-router-dom'; // <-- Make sure this import is here
 
 // Define the shape of the props for type safety
 interface SidebarProps {
   role: 'ADMIN' | 'EMPLOYEE';
   // Add handlers for future navigation/actions here
+  onDashboardContent: () => void;
+  onLeavePlanner: () => void;
   onViewLeaves: () => void;
   onApplyLeave: () => void;
+  onAdminManagement?: () => void;
+  onViewAllLeaves?: () => void;
   // ... other handlers
 }
 
@@ -14,7 +19,7 @@ interface SidebarProps {
  * Collapsible navigation sidebar for the LMS dashboard.
  * Content changes slightly based on the user's role.
  */
-export default function Sidebar({ role, onViewLeaves, onApplyLeave }: SidebarProps) {
+export default function Sidebar({ role, onDashboardContent, onViewLeaves, onApplyLeave, onLeavePlanner , onAdminManagement, onViewAllLeaves }: SidebarProps) {
   return (
     // Sidebar structure: Fixed-width column, responsive for smaller screens
     <div 
@@ -27,71 +32,36 @@ export default function Sidebar({ role, onViewLeaves, onApplyLeave }: SidebarPro
       
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item mb-4">
-          {/* Main Dashboard Link */}
-          <a href="/dashboard" className="nav-link active" aria-current="page">
-            <i className="bi bi-house-door me-2"></i> {/* Assuming you'll add Bootstrap Icons */}
+          <Link to="/dashboard" className="nav-link active" aria-current="page" onClick={onDashboardContent}>
+            <i className="bi bi-house-door me-2"></i>
             Dashboard
-          </a>
+          </Link>
         </li>
         
         <li className="nav-item mb-4">
-          <a href="/leave" className="nav-link active" aria-current="page">
-            <i className="bi bi-house-door me-2"></i> 
-            Leave Planar
-          </a>
-        </li>
-      
-
-        {/* Apply Leave (for all users) */}
-        <li className="nav-item mb-1">
-          <a 
-            href="#" 
-            className="nav-link text-white" 
-            onClick={onApplyLeave} // Future implementation
-          >
-            <i className="bi bi-calendar-plus me-2"></i>
-            Apply for Leave 📝
-          </a>
-        </li>
-
-        {/* View Leaves (for all users) */}
-        <li className="nav-item mb-1">
-          <a 
-            href="#" 
-            className="nav-link text-white" 
-            onClick={onViewLeaves} // Future implementation
-          >
-            <i className="bi bi-calendar-week me-2"></i>
-            View My Leaves
-          </a>
+          <button className="nav-link active text-start w-100" onClick={onLeavePlanner}>
+            <i className="bi bi-calendar-event me-2"></i> 
+            Leave Planner
+          </button>
         </li>
 
         {/* Admin-specific features */}
-        {role === 'ADMIN' && (
+        {role.toLocaleUpperCase() === 'ADMIN' && (
           <>
-            <li className="nav-item my-2">
-              <hr className="dropdown-divider bg-secondary"/>
-              <span className="text-muted small ms-3">Admin Tools</span>
-            </li>
-            <li className="nav-item mb-1">
-              <a 
-                href="#" 
-                className="nav-link text-white" 
-                // onClick={onViewAllLeaves} // Future implementation
-              >
+
+            <li className="nav-item mb-4">
+              {/* CHANGE: Using <button> for future actions */}
+              <button className="nav-link active text-start w-100" onClick={onViewAllLeaves}>
                 <i className="bi bi-list-check me-2"></i>
                 Review All Leaves
-              </a>
+              </button>
             </li>
-            <li className="nav-item mb-1">
-              <a 
-                href="#" 
-                className="nav-link text-white" 
-                // onClick={onManageUsers} // Future implementation
-              >
+            <li className="nav-item mb-4">
+              {/* CHANGE: Using <button> for future actions */}
+              <button className="nav-link active text-start w-100" onClick={onAdminManagement}>
                 <i className="bi bi-people me-2"></i>
                 Manage Users
-              </a>
+              </button>
             </li>
           </>
         )}

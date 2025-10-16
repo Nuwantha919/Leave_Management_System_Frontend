@@ -8,6 +8,9 @@ import Sidebar from '../../components/Sidebar'; // <-- Import the new component
 import DashboardContent from './DashboardContent';
 import ViewLeaveContent from './ViewLeaveContent';
 import ApplyLeaveContent from './ApplyLeaveContent';
+import LeavePlannerContent from './LeavePlannerContent'; 
+import ManageAdminContent from './AdminManageContent';
+import ReviewAllLeaves from './ReviewAllLeaves';
 
 /**
  * Main application dashboard/home page.
@@ -19,6 +22,7 @@ export default function Dashboard() {
   
   // Get user info from Redux state
   const { username, role, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  console.log("Passing this role to Sidebar:", role);
   
   // State to manage which content section is active (future use)
   const [activeContent, setActiveContent] = useState('DASHBOARD');
@@ -33,6 +37,10 @@ export default function Dashboard() {
   // Handlers for Sidebar actions (to be implemented later)
   const handleViewLeaves = () => setActiveContent('VIEW_LEAVES');
   const handleApplyLeave = () => setActiveContent('APPLY_LEAVE');
+  const handleLeavePlanner = () => setActiveContent('LEAVE_PLANNER');
+  const handleDashboardContent = () => setActiveContent('DASHBOARD');
+  const handleAdminManage = () => setActiveContent('ADMIN_MANAGEMENT');
+  const handleReviewAllLeaves = () => setActiveContent('REVIEW_ALL_LEAVES');
 
   return (
     // Main container uses d-flex for a full-height layout
@@ -81,6 +89,11 @@ export default function Dashboard() {
           role={role as 'ADMIN' | 'EMPLOYEE'} // Cast role for type safety
           onViewLeaves={handleViewLeaves}
           onApplyLeave={handleApplyLeave}
+          onLeavePlanner={handleLeavePlanner}
+          onAdminManagement={handleAdminManage}
+          onViewAllLeaves={handleReviewAllLeaves}
+          onDashboardContent={handleDashboardContent}
+          
         />
 
         {/* Content Panel (Main working area) */}
@@ -94,6 +107,9 @@ export default function Dashboard() {
           {/* You would add more conditional renderings here for VIEW_LEAVES, APPLY_LEAVE, etc. */}
           {activeContent === 'VIEW_LEAVES' && <div><ViewLeaveContent /></div>}
           {activeContent === 'APPLY_LEAVE' && <div><ApplyLeaveContent /></div>}
+          {activeContent === 'LEAVE_PLANNER' && <div><LeavePlannerContent /></div>}
+          {activeContent === 'ADMIN_MANAGEMENT' && role?.toLocaleUpperCase() === 'ADMIN' && <div><ManageAdminContent /></div>}
+          {activeContent === 'REVIEW_ALL_LEAVES' && role?.toLocaleUpperCase() === 'ADMIN' && <div><ReviewAllLeaves /></div>}
 
         </main>
       </div>
