@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar'; // <-- Import the new component
 import DashboardContent from './DashboardContent';
 import ViewLeaveContent from './ViewLeaveContent';
-import ApplyLeaveContent from './ApplyLeaveContent';
 import LeavePlannerContent from './LeavePlannerContent'; 
 import ManageAdminContent from './AdminManageContent';
 import ReviewAllLeaves from './ReviewAllLeaves';
@@ -38,6 +37,7 @@ export default function Dashboard() {
   const handleViewLeaves = () => setActiveContent('VIEW_LEAVES');
   const handleApplyLeave = () => setActiveContent('APPLY_LEAVE');
   const handleLeavePlanner = () => setActiveContent('LEAVE_PLANNER');
+  const handleViewLeave = () => setActiveContent('VIEW_LEAVE');
   const handleDashboardContent = () => setActiveContent('DASHBOARD');
   const handleAdminManage = () => setActiveContent('ADMIN_MANAGEMENT');
   const handleReviewAllLeaves = () => setActiveContent('REVIEW_ALL_LEAVES');
@@ -90,6 +90,7 @@ export default function Dashboard() {
           onViewLeaves={handleViewLeaves}
           onApplyLeave={handleApplyLeave}
           onLeavePlanner={handleLeavePlanner}
+          onViewLeave={handleViewLeave}
           onAdminManagement={handleAdminManage}
           onViewAllLeaves={handleReviewAllLeaves}
           onDashboardContent={handleDashboardContent}
@@ -106,8 +107,8 @@ export default function Dashboard() {
 
           {/* You would add more conditional renderings here for VIEW_LEAVES, APPLY_LEAVE, etc. */}
           {activeContent === 'VIEW_LEAVES' && <div><ViewLeaveContent /></div>}
-          {activeContent === 'APPLY_LEAVE' && <div><ApplyLeaveContent /></div>}
-          {activeContent === 'LEAVE_PLANNER' && <div><LeavePlannerContent /></div>}
+          {activeContent === 'LEAVE_PLANNER' && <LeavePlannerContent onApplyLeaveClick={handleApplyLeave} />}
+          {activeContent === 'APPLY_LEAVE' && <ApplyLeaveContent />}
           {activeContent === 'ADMIN_MANAGEMENT' && role?.toLocaleLowerCase() === 'admin' && <div><ManageAdminContent /></div>}
           {activeContent === 'REVIEW_ALL_LEAVES' && role?.toLocaleLowerCase() === 'admin' && <div><ReviewAllLeaves /></div>}
 

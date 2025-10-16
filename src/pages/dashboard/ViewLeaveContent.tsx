@@ -1,4 +1,4 @@
-export default function ApplyLeaveContent() {
+export default function ViewLeaveContent() {
     return (
         <div>
             <h2>View my Leave</h2>
