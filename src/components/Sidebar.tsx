@@ -26,7 +26,7 @@ export default function Sidebar({ role, onViewLeaves, onApplyLeave }: SidebarPro
       </div>
       
       <ul className="nav nav-pills flex-column mb-auto">
-        <li className="nav-item mb-1">
+        <li className="nav-item mb-4">
           {/* Main Dashboard Link */}
           <a href="/dashboard" className="nav-link active" aria-current="page">
             <i className="bi bi-house-door me-2"></i> {/* Assuming you'll add Bootstrap Icons */}
@@ -34,10 +34,13 @@ export default function Sidebar({ role, onViewLeaves, onApplyLeave }: SidebarPro
           </a>
         </li>
         
-        <li className="nav-item my-2">
-          <hr className="dropdown-divider bg-secondary"/>
-          <span className="text-muted small ms-3">Actions</span>
+        <li className="nav-item mb-4">
+          <a href="/leave" className="nav-link active" aria-current="page">
+            <i className="bi bi-house-door me-2"></i> 
+            Leave Planar
+          </a>
         </li>
+      
 
         {/* Apply Leave (for all users) */}
         <li className="nav-item mb-1">
