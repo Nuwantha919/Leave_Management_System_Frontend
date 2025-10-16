@@ -46,7 +46,7 @@ export default function Sidebar({ role, onDashboardContent, onViewLeaves, onAppl
         </li>
 
         {/* Admin-specific features */}
-        {role.toLocaleLowerCase() === 'admin' && (
+        {role?.toLocaleLowerCase() === 'admin' && (
           <>
 
             <li className="nav-item mb-4">
