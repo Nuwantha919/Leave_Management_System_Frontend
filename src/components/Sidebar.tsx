@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'; // <-- Make sure this import is here
 
 // Define the shape of the props for type safety
 interface SidebarProps {
-  role: 'ADMIN' | 'EMPLOYEE';
+  role: 'admin' | 'employee';
   // Add handlers for future navigation/actions here
   onDashboardContent: () => void;
   onLeavePlanner: () => void;
@@ -46,7 +46,7 @@ export default function Sidebar({ role, onDashboardContent, onViewLeaves, onAppl
         </li>
 
         {/* Admin-specific features */}
-        {role.toLocaleUpperCase() === 'ADMIN' && (
+        {role.toLocaleLowerCase() === 'admin' && (
           <>
 
             <li className="nav-item mb-4">

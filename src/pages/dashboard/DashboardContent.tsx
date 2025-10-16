@@ -5,7 +5,7 @@ export default function DashboardContent({ role }: { role: string | null }) {
             <div className="col-12">
             
             {/* Role-based Welcome Message */}
-            {role === 'ADMIN' ? (
+            {role === 'admin' ? (
                 <div className="alert alert-info" role="alert">
                 <i className="bi bi-tools me-2"></i>
                 **Admin View:** You can manage all leave requests. Use the sidebar to navigate.
@@ -33,7 +33,7 @@ export default function DashboardContent({ role }: { role: string | null }) {
                         <div className="card-body">
                             <h5 className="card-title text-warning">Pending Requests</h5>
                             <p className="card-text fs-2 fw-bold">3</p>
-                            <p className="text-muted small">Action required by **{role === 'ADMIN' ? 'you' : 'Admin'}**.</p>
+                            <p className="text-muted small">Action required by **{role === 'admin' ? 'you' : 'Admin'}**.</p>
                         </div>
                     </div>
                 </div>

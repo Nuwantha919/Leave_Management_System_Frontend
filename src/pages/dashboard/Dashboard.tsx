@@ -86,7 +86,7 @@ export default function Dashboard() {
         
         {/* Sidebar (Leave Planar functions) */}
         <Sidebar 
-          role={role as 'ADMIN' | 'EMPLOYEE'} // Cast role for type safety
+          role={role as 'admin' | 'employee'} // Cast role for type safety
           onViewLeaves={handleViewLeaves}
           onApplyLeave={handleApplyLeave}
           onLeavePlanner={handleLeavePlanner}
@@ -108,8 +108,8 @@ export default function Dashboard() {
           {activeContent === 'VIEW_LEAVES' && <div><ViewLeaveContent /></div>}
           {activeContent === 'APPLY_LEAVE' && <div><ApplyLeaveContent /></div>}
           {activeContent === 'LEAVE_PLANNER' && <div><LeavePlannerContent /></div>}
-          {activeContent === 'ADMIN_MANAGEMENT' && role?.toLocaleUpperCase() === 'ADMIN' && <div><ManageAdminContent /></div>}
-          {activeContent === 'REVIEW_ALL_LEAVES' && role?.toLocaleUpperCase() === 'ADMIN' && <div><ReviewAllLeaves /></div>}
+          {activeContent === 'ADMIN_MANAGEMENT' && role?.toLocaleLowerCase() === 'admin' && <div><ManageAdminContent /></div>}
+          {activeContent === 'REVIEW_ALL_LEAVES' && role?.toLocaleLowerCase() === 'admin' && <div><ReviewAllLeaves /></div>}
 
         </main>
       </div>
