@@ -1,83 +1,59 @@
+// src/store/auth/authSlice.ts
+
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { loginUser } from './authThunks'; 
-import type { AuthState, UserInfo } from './AuthTypes'; 
+import { loginUser } from './authThunks';
+import type { AuthState, UserInfo } from './AuthTypes';
 
-// Function to check initial state from storage
-const getToken = () => localStorage.getItem('authToken');
-
+// The initial state is now very simple.
+// redux-persist will "rehydrate" this state with saved data from localStorage on app load.
 const initialState: AuthState = {
-  // Form input state (used by Login.tsx)
-  username: '', 
-  password: '', 
+  // We no longer manage form inputs in the global state, it's better as local component state.
+  username: '', // This will hold the username *after* a successful login
   
   // Auth status state
-  token: getToken(),
+  token: null,
   role: null,
-  
-  // Derived state
-  isAuthenticated: !!getToken(),
+  isAuthenticated: false,
   isLoading: false,
   error: null,
 };
-
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // Reducers to handle form input changes
-    setUsername: (state, action: PayloadAction<string>) => {
-      state.username = action.payload;
-      state.error = null;
-    },
-    setPassword: (state, action: PayloadAction<string>) => { // <-- FIX: This reducer is now valid
-      state.password = action.payload;
-      state.error = null;
-    },
+    // The logout action is now much simpler.
+    // We just reset the state to its initial values.
+    // redux-persist will automatically see this change and clear the 'auth' data from localStorage.
     logout: (state) => {
-      localStorage.removeItem('authToken');
-      Object.assign(state, initialState, { 
-          token: null, 
-          isAuthenticated: false,
-          username: '',
-          password: ''
-      });
-    }
+      Object.assign(state, initialState);
+    },
   },
   
   extraReducers: (builder) => {
-    // Handle the PENDING state of the async thunk
-    builder.addCase(loginUser.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
-      state.isAuthenticated = false;
-    });
-
-    // Handle the FULFILLED (SUCCESS) state of the async thunk
-    builder.addCase(loginUser.fulfilled, (state, action: PayloadAction<UserInfo>) => {
-      state.isLoading = false;
-      state.isAuthenticated = true;
-      state.error = null;
-      
-      // Update persistent user info
-      state.username = action.payload.username;
-      state.role = action.payload.role;
-      state.token = action.payload.token;
-      
-      state.password = ''; // Clear password from state after success
-    });
-
-    // Handle the REJECTED (FAILURE) state of the async thunk
-    builder.addCase(loginUser.rejected, (state, action) => {
-      state.isLoading = false;
-      state.isAuthenticated = false;
-      // Get the error message from the thunk's rejectWithValue
-      state.error = action.payload as string || 'Login failed, please try again.'; 
-      state.token = null;
-    });
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action: PayloadAction<UserInfo>) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.username = action.payload.username;
+        state.role = action.payload.role;
+        state.token = action.payload.token;
+        state.error = null;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        // When login fails, reset to the initial (logged-out) state
+        Object.assign(state, initialState, { 
+          error: action.payload as string || 'Login failed, please try again.'
+        });
+      });
   },
 });
 
-export const { setUsername, setPassword, logout } = authSlice.actions;
+// We no longer need setUsername and setPassword actions
+export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

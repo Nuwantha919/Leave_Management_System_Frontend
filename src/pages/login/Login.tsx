@@ -1,19 +1,20 @@
-// src/pages/Login.tsx (UPDATED)
-
-import React, { useState, type FormEvent, useEffect } from "react"; // <-- Added useEffect
+import React, { useState, type FormEvent, useEffect } from "react"; 
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom'; // <-- NEW
-import { setUsername, setPassword } from '../../store/auth/authSlice'; 
+import { useNavigate } from 'react-router-dom'; 
 import { loginUser } from '../../store/auth/authThunks'; 
 import { type RootState, type AppDispatch } from '../../store/store';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate(); // <-- NEW: Hook for navigation
+  const navigate = useNavigate(); 
   
-  // Select state from Redux store
-  const { username, password, isLoading, error, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  // Manage form fields with local state
+  const [localUsername, setLocalUsername] = useState('');
+  const [localPassword, setLocalPassword] = useState('');
+
+// Get only the authentication status from Redux
+const { isLoading, error, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   // Effect to handle navigation on successful login
   useEffect(() => {
@@ -26,7 +27,8 @@ export default function Login() {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(loginUser({ username, password }));
+    // Use the local state variables here
+    dispatch(loginUser({ username: localUsername, password: localPassword }));
   };
   
   // NOTE: If isAuthenticated is true, the useEffect handles the redirect, so we don't render the form
@@ -91,9 +93,8 @@ export default function Login() {
                         id="username"
                         className="form-control"
                 // Redux State: value={username}
-                        value={username}
-                // Redux Dispatch: onChange calls setUsername action
-                        onChange={(e) => dispatch(setUsername(e.target.value))}
+                        value={localUsername}
+                        onChange={(e) => setLocalUsername(e.target.value)}
                 placeholder="nuwantha"
                         autoComplete="username"
                         required
@@ -110,9 +111,9 @@ export default function Login() {
                         id="password"
                         className="form-control pe-5"
                 // Redux State: value={password}
-                        value={password}
+                        value={localPassword}
                 // Redux Dispatch: onChange calls setPassword action
-                        onChange={(e) => dispatch(setPassword(e.target.value))}
+                        onChange={(e) => setLocalPassword(e.target.value)}
                         placeholder="••••••••"
                         autoComplete="current-password"
                         required
