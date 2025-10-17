@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as leaveService from '../../services/leaveService';
 import { type CreateLeaveDto } from '../../types/leaveTypes';
-import { type RootState } from '../store';
+import type { RootState } from '../store';
 
 const THUNK_PREFIX = 'leaves';
 

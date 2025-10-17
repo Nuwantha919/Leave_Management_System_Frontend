@@ -22,10 +22,13 @@ export const loginUser = createAsyncThunk<
     try {
       const responseData = await login(credentials);
       const user: UserInfo = {
-        username: responseData.username,
-        role: responseData.role,
-        token: responseData.token,
-      };
+              username: responseData.username,
+              role: responseData.role,
+              token: responseData.token,
+              maximumLeaveCount: responseData.maximumLeaveCount,
+              leavesTaken: responseData.leavesTaken,
+              leaveBalance: responseData.leaveBalance,
+            };
 
       return user; 
 

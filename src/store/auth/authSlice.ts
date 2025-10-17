@@ -1,5 +1,3 @@
-// src/store/auth/authSlice.ts
-
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { loginUser } from './authThunks';
 import type { AuthState, UserInfo } from './AuthTypes';
@@ -11,6 +9,9 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isLoading: false,
   error: null,
+  maximumLeaveCount: null,
+  leavesTaken: null,
+  leaveBalance: null,
 };
 
 export const authSlice = createSlice({
@@ -18,11 +19,9 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      // Reset the state to its initial values. redux-persist clears storage automatically.
       Object.assign(state, initialState);
     },
   },
-  
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
@@ -35,6 +34,9 @@ export const authSlice = createSlice({
         state.username = action.payload.username;
         state.role = action.payload.role;
         state.token = action.payload.token;
+        state.maximumLeaveCount = action.payload.maximumLeaveCount;
+        state.leavesTaken = action.payload.leavesTaken;
+        state.leaveBalance = action.payload.leaveBalance;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -46,5 +48,4 @@ export const authSlice = createSlice({
 });
 
 export const { logout } = authSlice.actions;
-
 export default authSlice.reducer;

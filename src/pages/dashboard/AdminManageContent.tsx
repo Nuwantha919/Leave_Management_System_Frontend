@@ -1,5 +1,3 @@
-// src/pages/dashboard/AdminManageContent.tsx
-
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { type AppDispatch, type RootState } from '../../store/store';
@@ -12,24 +10,29 @@ export default function AdminManageContent() {
   // Local state for the form inputs
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('EMPLOYEE'); // Default to creating an employee
+  const [role, setRole] = useState('EMPLOYEE');
+  // --- THIS IS THE FIX (Part 1) --- ✅
+  // Add state for the new maximumLeaveCount field
+  const [maximumLeaveCount, setMaximumLeaveCount] = useState(20);
+  // ---------------------------------
   const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage(''); // Clear any previous success messages
+    setSuccessMessage('');
 
-    dispatch(createUserThunk({ username, password, role }))
-      .unwrap() // Use unwrap() to handle the promise here
+    // Pass the new maximumLeaveCount state to the thunk
+    dispatch(createUserThunk({ username, password, role, maximumLeaveCount }))
+      .unwrap()
       .then((newUser) => {
         setSuccessMessage(`Successfully registered user: ${newUser.username}`);
         // Clear form fields on success
         setUsername('');
         setPassword('');
         setRole('EMPLOYEE');
+        setMaximumLeaveCount(20); // Reset to default
       })
       .catch((err) => {
-        // The error is already in the Redux state, so we don't need to set it here
         console.error("Registration failed:", err);
       });
   };
@@ -41,7 +44,6 @@ export default function AdminManageContent() {
       </div>
       <div className="card-body">
         <form onSubmit={handleSubmit}>
-          {/* Display API error or success message */}
           {error && status === 'failed' && <div className="alert alert-danger">{error}</div>}
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
@@ -67,18 +69,34 @@ export default function AdminManageContent() {
               required
             />
           </div>
-          <div className="mb-3">
-            <label htmlFor="reg-role" className="form-label">Role</label>
-            <select
-              className="form-select"
-              id="reg-role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="EMPLOYEE">Employee</option>
-              <option value="ADMIN">Admin</option>
-            </select>
+          
+          <div className="row mb-3">
+            <div className="col-md-8">
+              <label htmlFor="reg-role" className="form-label">Role</label>
+              <select
+                className="form-select"
+                id="reg-role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="EMPLOYEE">Employee</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+            </div>
+            <div className="col-md-4">
+              <label htmlFor="reg-max-leaves" className="form-label">Max Leaves</label>
+              <input
+                type="number"
+                className="form-control"
+                id="reg-max-leaves"
+                value={maximumLeaveCount}
+                onChange={(e) => setMaximumLeaveCount(parseInt(e.target.value, 10))}
+                required
+              />
+            </div>
           </div>
+          {/* --------------------------------- */}
+
           <div className="d-flex justify-content-end">
             <button type="submit" className="btn btn-primary" disabled={status === 'loading'}>
               {status === 'loading' ? 'Registering...' : 'Register User'}

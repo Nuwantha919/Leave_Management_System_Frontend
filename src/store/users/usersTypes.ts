@@ -4,6 +4,7 @@ export interface UserRegistrationData {
   username: string;
   password: string;
   role: string;
+  maximumLeaveCount: number;
 }
 
 export interface UsersState {
