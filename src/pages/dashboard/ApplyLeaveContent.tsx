@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { type AppDispatch, type RootState } from '../../store/store';
 import { createLeaveThunk } from '../../store/leaves/leavesThunks';
+import { toast } from 'react-toastify';
 
 export default function ApplyLeaveContent() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { status, error } = useSelector((state: RootState) => state.leaves);
-  
+  const { status } = useSelector((state: RootState) => state.leaves);
+
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
@@ -17,11 +18,15 @@ export default function ApplyLeaveContent() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validation for required fields
     if (!startDate || !endDate || !reason) {
+      toast.error('All fields are required.'); // for errors
       setFormError('All fields are required.');
       return;
     }
+    // Validation for date range 
     if (new Date(startDate) > new Date(endDate)) {
+      toast.warn('The "From Date" cannot be after the "To Date".'); // Use toast for warnings
       setFormError('The "From Date" cannot be after the "To Date".');
       return;
     }
@@ -30,11 +35,12 @@ export default function ApplyLeaveContent() {
     dispatch(createLeaveThunk({ startDate, endDate, reason }))
       .unwrap()
       .then(() => {
-        alert('Leave request submitted successfully!');
-        navigate('/dashboard/planner'); // Redirect on success
+        toast.success('Leave request submitted successfully!');
+        navigate('/dashboard/planner');
       })
       .catch((err) => {
-        // The error from the thunk is handled by the slice, but we can show it in the form too
+        // Use toast for API errors
+        toast.error(err || 'An unknown error occurred.');
         setFormError(err || 'An unknown error occurred.');
       });
   };
@@ -46,7 +52,7 @@ export default function ApplyLeaveContent() {
       </div>
       <div className="card-body">
         <form onSubmit={handleSubmit}>
-          {formError && <div className="alert alert-danger">{formError}</div>}
+          {formError && <div className="alert alert-danger small p-2">{formError}</div>}
           
           <div className="row mb-3">
             <div className="col-md-6">
@@ -86,7 +92,7 @@ export default function ApplyLeaveContent() {
             <button 
               type="button" 
               className="btn btn-secondary me-2" 
-              onClick={() => navigate(-1)} // Go back to the previous page
+              onClick={() => navigate(-1)}
             >
               Cancel
             </button>
