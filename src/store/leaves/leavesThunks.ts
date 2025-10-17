@@ -62,10 +62,11 @@ export const createLeaveThunk = createAsyncThunk(
  * Thunk to update a leave's status (Approve/Reject).
  */
 export const updateLeaveStatusThunk = createAsyncThunk(
-  `${THUNK_PREFIX}/updateLeaveStatus`,
+  `leaves/updateLeaveStatus`,
   async ({ id, status }: { id: number; status: 'APPROVED' | 'REJECTED' }, { rejectWithValue }) => {
     try {
-      const updatedLeave = await leaveService.updateLeave(id, { status });
+      // Calls the new updateLeaveStatus function in our service
+      const updatedLeave = await leaveService.updateLeaveStatus(id, status);
       return updatedLeave;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update leave status');

@@ -38,6 +38,11 @@ export const updateLeave = async (id: number, updatedData: Partial<Leave>): Prom
   const response = await api.put(`/leaves/${id}`, updatedData);
   return response.data;
 };
+export const updateLeaveStatus = async (id: number, status: 'APPROVED' | 'REJECTED'): Promise<Leave> => {
+  // Calls the new PUT /api/leaves/{id}/status endpoint
+  const response = await api.put(`/leaves/${id}/status`, { status });
+  return response.data;
+};
 
 /**
  * Deletes (cancels) a pending leave request.
