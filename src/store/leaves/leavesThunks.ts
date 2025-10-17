@@ -1,17 +1,26 @@
-// src/store/leaves/leavesThunks.ts
-
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as leaveService from '../../services/leaveService';
 import { type CreateLeaveDto } from '../../types/leaveTypes';
+import { type RootState } from '../store';
 
 const THUNK_PREFIX = 'leaves';
 
-// --- FETCH THUNKS (Already created, no changes) ---
 export const fetchMyLeavesThunk = createAsyncThunk(
-  `${THUNK_PREFIX}/fetchMyLeaves`,
-  async (_, { rejectWithValue }) => {
+  `leaves/fetchMyLeaves`,
+  // The thunkAPI object gives us access to getState
+  async (_, { getState, rejectWithValue }) => {
     try {
-      const leaves = await leaveService.fetchMyLeaves();
+      // Get the current state and extract the username
+      const state = getState() as RootState;
+      const username = state.auth.username;
+
+      // If there's no username, we can't fetch data
+      if (!username) {
+        return rejectWithValue('User is not logged in.');
+      }
+
+      // Call the service with the username
+      const leaves = await leaveService.fetchMyLeaves(username);
       return leaves;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch your leaves');

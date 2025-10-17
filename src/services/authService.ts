@@ -1,36 +1,27 @@
+// src/services/authService.ts
+
+import axios from 'axios'; // Import the base axios library
 import type { 
   LoginRequestData, 
   LoginResponseData 
 } from './../store/auth/AuthTypes'; 
 
-const BASE_URL = 'http://localhost:8080'; 
-
 /**
- * Calls the Spring Boot /login endpoint.
+ * Calls the public /login endpoint.
+ * We use a direct axios call here because it's a public route and
+ * outside our '/api' base path which is configured for authenticated routes.
  */
-export async function login(
+export const login = async (
   credentials: LoginRequestData
-): Promise<LoginResponseData> {
-  
-  const response = await fetch(`${BASE_URL}/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(credentials),
-  });
-  console.log('Response status:', response.status); // Debug log
-  const data = await response.json();
-
-  if (!response.ok) {
-    // Throws the backend's error message (e.g., "Invalid username or password.")
-    const errorMessage = data.message || 'Login failed due to a network error.';
-    throw new Error(errorMessage); 
+): Promise<LoginResponseData> => {
+  try {
+    const response = await axios.post('http://localhost:8080/login', credentials);
+    return response.data;
+  } catch (error: any) {
+    // Re-throw a cleaner error message for the thunk to catch
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw new Error('An unknown login error occurred.');
   }
-
-  // Store the token immediately
-  localStorage.setItem('authToken', data.token);
-
-  // Return the successful data
-  return data as LoginResponseData;
-}
+};

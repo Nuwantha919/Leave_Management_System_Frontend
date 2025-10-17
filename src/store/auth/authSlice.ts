@@ -4,13 +4,8 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { loginUser } from './authThunks';
 import type { AuthState, UserInfo } from './AuthTypes';
 
-// The initial state is now very simple.
-// redux-persist will "rehydrate" this state with saved data from localStorage on app load.
 const initialState: AuthState = {
-  // We no longer manage form inputs in the global state, it's better as local component state.
-  username: '', // This will hold the username *after* a successful login
-  
-  // Auth status state
+  username: null,
   token: null,
   role: null,
   isAuthenticated: false,
@@ -22,10 +17,8 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // The logout action is now much simpler.
-    // We just reset the state to its initial values.
-    // redux-persist will automatically see this change and clear the 'auth' data from localStorage.
     logout: (state) => {
+      // Reset the state to its initial values. redux-persist clears storage automatically.
       Object.assign(state, initialState);
     },
   },
@@ -45,7 +38,6 @@ export const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
-        // When login fails, reset to the initial (logged-out) state
         Object.assign(state, initialState, { 
           error: action.payload as string || 'Login failed, please try again.'
         });
@@ -53,7 +45,6 @@ export const authSlice = createSlice({
   },
 });
 
-// We no longer need setUsername and setPassword actions
 export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;

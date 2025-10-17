@@ -12,13 +12,11 @@ export const fetchAllLeaves = async (): Promise<Leave[]> => {
 };
 
 /**
- * Fetches leaves for the currently logged-in employee.
- * The backend knows who the user is from the token.
+ * Fetches leaves for a specific employee by their username.
+ * @param username - The username of the employee to fetch leaves for.
  */
-export const fetchMyLeaves = async (): Promise<Leave[]> => {
-    // The endpoint is the same, but the backend's security logic
-    // will return only the leaves for the user associated with the token.
-    const response = await api.get('/leaves');
+export const fetchMyLeaves = async (username: string): Promise<Leave[]> => {
+    const response = await api.get(`/leaves?employeeName=${username}`);
     return response.data;
 };
 
