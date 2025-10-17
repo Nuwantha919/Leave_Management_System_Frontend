@@ -2,38 +2,31 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { type AppDispatch, type RootState } from '../../store/store';
 import { createUserThunk } from '../../store/users/usersThunks';
+import { toast } from 'react-toastify';
 
 export default function AdminManageContent() {
   const dispatch = useDispatch<AppDispatch>();
   const { status, error } = useSelector((state: RootState) => state.users);
 
-  // Local state for the form inputs
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('EMPLOYEE');
-  // --- THIS IS THE FIX (Part 1) --- ✅
-  // Add state for the new maximumLeaveCount field
   const [maximumLeaveCount, setMaximumLeaveCount] = useState(20);
-  // ---------------------------------
-  const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage('');
 
-    // Pass the new maximumLeaveCount state to the thunk
     dispatch(createUserThunk({ username, password, role, maximumLeaveCount }))
       .unwrap()
       .then((newUser) => {
-        setSuccessMessage(`Successfully registered user: ${newUser.username}`);
-        // Clear form fields on success
+        toast.success(`Successfully registered user: ${newUser.username}`);
         setUsername('');
         setPassword('');
         setRole('EMPLOYEE');
-        setMaximumLeaveCount(20); // Reset to default
+        setMaximumLeaveCount(20);
       })
       .catch((err) => {
-        console.error("Registration failed:", err);
+        toast.error(err || "Registration failed. Please try again.");
       });
   };
 
@@ -45,8 +38,6 @@ export default function AdminManageContent() {
       <div className="card-body">
         <form onSubmit={handleSubmit}>
           {error && status === 'failed' && <div className="alert alert-danger">{error}</div>}
-          {successMessage && <div className="alert alert-success">{successMessage}</div>}
-
           <div className="mb-3">
             <label htmlFor="reg-username" className="form-label">Username</label>
             <input
@@ -69,7 +60,6 @@ export default function AdminManageContent() {
               required
             />
           </div>
-          
           <div className="row mb-3">
             <div className="col-md-8">
               <label htmlFor="reg-role" className="form-label">Role</label>
@@ -95,8 +85,6 @@ export default function AdminManageContent() {
               />
             </div>
           </div>
-          {/* --------------------------------- */}
-
           <div className="d-flex justify-content-end">
             <button type="submit" className="btn btn-primary" disabled={status === 'loading'}>
               {status === 'loading' ? 'Registering...' : 'Register User'}

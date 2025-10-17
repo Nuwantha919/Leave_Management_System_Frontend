@@ -1,5 +1,3 @@
-// src/components/Sidebar.tsx
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -8,7 +6,6 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ role }: SidebarProps) {
-  // This function returns an object with styling for the active link
   const getActiveStyle = ({ isActive }: { isActive: boolean }) => 
     isActive 
       ? { backgroundColor: '#0d6efd', color: 'white' } 
@@ -25,7 +22,7 @@ export default function Sidebar({ role }: SidebarProps) {
       
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item mb-2">
-          {/* 'end' prop ensures this link is only active on the exact path */}
+          {/* The 'end' prop ensures this link is only active on the exact path "/dashboard". */}
           <NavLink to="/dashboard" end className="nav-link text-white" style={getActiveStyle}>
             <i className="bi bi-house-door me-2"></i> Dashboard
           </NavLink>
@@ -36,7 +33,7 @@ export default function Sidebar({ role }: SidebarProps) {
           </NavLink>
         </li>
 
-        {/* Admin-specific features */}
+        {/* Conditionally render admin-specific navigation links. */}
         {role?.toLocaleLowerCase() === 'admin' && (
           <>
             <li className="nav-item mb-2">
@@ -53,13 +50,6 @@ export default function Sidebar({ role }: SidebarProps) {
         )}
       </ul>
       
-      {/* Placeholder for future notifications */}
-      <div className="mt-auto pt-3 border-top">
-        <p className="text-white small mb-1">🔔 Notifications:</p>
-        <div className="alert alert-warning p-1 small text-center">
-          2 Pending Requests
-        </div>
-      </div>
     </div>
   );
 }

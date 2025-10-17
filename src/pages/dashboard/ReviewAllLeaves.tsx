@@ -3,16 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../store/store';
 import { fetchAllLeavesThunk } from '../../store/leaves/leavesThunks';
 import LeaveTable, { type Leave } from './components/LeaveTable';
-import Pagination from './components/Pagination'; 
+import Pagination from './components/Pagination';
 
 export default function ReviewAllLeaves() {
   const dispatch = useDispatch<AppDispatch>();
   const { leaves, status, error } = useSelector((state: RootState) => state.leaves);
-  
+
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [nameFilter, setNameFilter] = useState<string>('');
-  
-  // --- NEW: State for pagination ---
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
 
@@ -20,7 +18,6 @@ export default function ReviewAllLeaves() {
     dispatch(fetchAllLeavesThunk());
   }, [dispatch]);
 
-  // Reset to page 1 whenever filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [statusFilter, nameFilter]);
@@ -35,7 +32,7 @@ export default function ReviewAllLeaves() {
       return leave.employeeName.toLowerCase().includes(nameFilter.toLowerCase());
     });
 
-  // --- NEW: Pagination Logic ---
+  // Pagination Logic
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = filteredLeaves.slice(indexOfFirstRecord, indexOfLastRecord);
@@ -58,7 +55,6 @@ export default function ReviewAllLeaves() {
         <h4 className="mb-0">Review All Employee Leaves</h4>
       </div>
       <div className="card-body">
-        {/* Filter controls are unchanged */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div className="input-group" style={{ maxWidth: '300px' }}>
             <span className="input-group-text">
@@ -82,7 +78,6 @@ export default function ReviewAllLeaves() {
         
         {content}
 
-        {/* --- NEW: Render the Pagination component --- */}
         <Pagination
           totalPages={totalPages}
           currentPage={currentPage}

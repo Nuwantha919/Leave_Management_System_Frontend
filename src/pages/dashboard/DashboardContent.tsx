@@ -1,5 +1,3 @@
-// src/pages/dashboard/DashboardContent.tsx
-
 import React from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
@@ -7,7 +5,6 @@ import type { RootState } from '../../store/store';
 export default function DashboardContent() {
   const { username, role, leaveBalance, leavesTaken } = useSelector((state: RootState) => state.auth);
   
-  // You can fetch this from the leaves slice later
   const pendingRequests = useSelector((state: RootState) => 
     state.leaves.leaves.filter(l => l.status === 'PENDING').length
   );
@@ -38,7 +35,6 @@ export default function DashboardContent() {
         </div>
       </div>
       <hr />
-
       <div className="row mt-4">
         <div className="col-md-4 mb-3">
           <div className="card shadow-sm border-primary h-100">
@@ -58,7 +54,7 @@ export default function DashboardContent() {
             </div>
           </div>
         </div>
-         <div className="col-md-4 mb-3">
+        <div className="col-md-4 mb-3">
           <div className="card shadow-sm border-warning h-100">
             <div className="card-body text-center">
               <h5 className="card-title text-warning">Pending Requests</h5>
