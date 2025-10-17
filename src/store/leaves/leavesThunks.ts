@@ -72,6 +72,23 @@ export const updateLeaveStatusThunk = createAsyncThunk(
     }
   }
 );
+/**
+ * Thunk to edit an existing leave request.
+ */
+export const editLeaveThunk = createAsyncThunk(
+  `leaves/editLeave`,
+  async (
+    { id, updatedData }: { id: number; updatedData: { startDate: string; endDate: string; reason: string } },
+    { rejectWithValue }
+  ) => {
+    try {
+      const updatedLeave = await leaveService.updateLeave(id, updatedData);
+      return updatedLeave;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to edit leave');
+    }
+  }
+);
 
 /**
  * Thunk to delete (cancel) a leave request.
