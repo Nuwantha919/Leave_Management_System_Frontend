@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './auth/authSlice';
+import leavesReducer from './leaves/leavesSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    leaves: leavesReducer,
   },
 });
 
