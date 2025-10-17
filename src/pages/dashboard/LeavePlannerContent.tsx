@@ -1,28 +1,30 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { type AppDispatch, type RootState } from '../../store/store';
+import type { AppDispatch, RootState } from '../../store/store';
 import { fetchMyLeavesThunk } from '../../store/leaves/leavesThunks';
 import LeaveTable from './components/LeaveTable';
 
 export default function LeavePlannerContent() {
   const dispatch = useDispatch<AppDispatch>();
-  const { leaves, status, error } = useSelector((state: RootState) => state.leaves);
 
-  // Fetch data from the API when the component loads
+  const { leaves, status, error } = useSelector((state: RootState) => state.leaves);
+  const { username: loggedInUsername } = useSelector((state: RootState) => state.auth);
+
   useEffect(() => {
-    // Only fetch if the data is not already loaded or loading
     if (status === 'idle') {
       dispatch(fetchMyLeavesThunk());
     }
   }, [status, dispatch]);
+
+  const myLeaves = leaves.filter(leave => leave.employeeName === loggedInUsername);
 
   let content;
 
   if (status === 'loading') {
     content = <div className="text-center p-5">Loading your leave requests...</div>;
   } else if (status === 'succeeded') {
-    content = <LeaveTable leaves={leaves} isAdminView={false} />;
+    content = <LeaveTable leaves={myLeaves} isAdminView={false} />;
   } else if (status === 'failed') {
     content = <div className="alert alert-danger">Error: {error}</div>;
   }
