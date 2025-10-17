@@ -1,8 +1,6 @@
-// src/services/userService.ts
-
 import api from './api';
 import { type UserRegistrationData } from '../store/users/usersTypes';
-import { type User } from '../types/userTypes'; // We will create this type next
+import { type User } from '../types/userTypes'; 
 
 /**
  * Registers a new user. (Admin only feature)

@@ -1,6 +1,4 @@
-// src/services/authService.ts
-
-import axios from 'axios'; // Import the base axios library
+import axios from 'axios'; 
 import type { 
   LoginRequestData, 
   LoginResponseData 

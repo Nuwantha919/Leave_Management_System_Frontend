@@ -1,5 +1,3 @@
-// src/services/leaveService.ts
-
 import api from './api';
 import { type Leave, type CreateLeaveDto } from '../types/leaveTypes';
 
