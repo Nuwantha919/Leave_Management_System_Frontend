@@ -1,73 +1,90 @@
-# React + TypeScript + Vite
+# Leave Management System — Frontend (React + TypeScript + Vite + Redux Toolkit)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, production-ready frontend for managing employee leaves with **login/session handling**, **role-based UI**, **form validation**, **pagination**, **token validation**, and **real-time toast notifications**.  
+Pairs with the **Spring Boot + MySQL backend** in the companion repository.
 
-Currently, two official plugins are available:
+> **Tech Stack:** React 19, TypeScript, Vite, React Router, Redux Toolkit, Redux Persist, Axios, React Hook Form, React-Toastify, Vitest + React Testing Library.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## ✨ Features Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🔐 Authentication Flow
+- Login page (UI based on the provided design)
+- Token-based authentication — stored in Redux & persisted in `localStorage`
+- Token is automatically attached to all authenticated API calls
+- Token validation:
+  - On each app load, the token is checked.
+  - If expired or invalid, the user is logged out and redirected to `/login`.
+- Sample credentials:
+  - **Employee:** `employee / emp123`
+  - **Admin:** `admin / admin123`
 
-## Expanding the ESLint configuration
+<img width="602" height="505" alt="login" src="https://github.com/user-attachments/assets/610cc1e6-6c9e-44fe-ad1c-0482ba9d7459" />
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 🧭 Routing
+- **Public route:** `/login`
+- **Protected routes:** `/dashboard`, `/dashboard/apply`, `/dashboard/review-all`, `/dashboard/manage-users`, etc.
+- Guarded by a custom `<ProtectedRoute />` that checks authentication.
+- Role-based navigation — different menu options for `ADMIN` and `EMPLOYEE`.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+<img width="1909" height="784" alt="admin view" src="https://github.com/user-attachments/assets/a4f63d7e-569c-4af0-ba6b-ef69106687c8" />
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 📦 State Management (Redux Toolkit)
+- `auth` slice → login/logout, token handling, session persistence  
+- `leaves` slice → CRUD operations on leaves  
+- `users` slice → (Admin) user registration  
+- `redux-persist` → persists only `auth` slice (for token + user info)
+- Async thunks using **Axios** for API calls.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 📅 Leave Management
+- Fields: `fromDate`, `toDate`, `reason`, `status (Pending | Approved | Rejected)`, `employeeName`, `id`
+- **Employee Flows:**
+  - Apply for leave (validated form)
+  - View & paginate their leave requests
+  - Edit or cancel leaves only when status is `Pending`
+- **Admin Flows:**
+  - View all leaves (paginated)
+  - Approve / Reject leave requests
+  - Filter by status (`Pending / Approved / Rejected`)
+  - Register employees (via `/manage-users`)
+
+---
+
+### ⚙️ Pagination
+- Simple, responsive pagination on leave tables for both roles.
+- Configurable page size (default: 5 or 10 records per page).
+- Pagination state stored in Redux to persist between navigations.
+
+---
+
+### 💬 User Notifications (React-Toastify)
+Real-time toast notifications for:
+
+- ✅ Successful login / logout
+- 📄 Leave creation, update, or deletion
+- ⚙️ Admin actions (approve/reject)
+- ❌ Invalid token or unauthorized access
+
+```tsx
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+<ToastContainer
+  position="bottom-right"
+  autoClose={4000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  theme="colored"
+/>
