@@ -141,6 +141,10 @@ Real-time feedback for:
 
 <img width="749" height="346" alt="notifications" src="https://github.com/user-attachments/assets/7bc6deda-96ce-400e-b18e-a3305333c463" />
 
+## User Registration
+<img width="477" height="335" alt="userregistration" src="https://github.com/user-attachments/assets/c39a407b-cb61-44a4-9c18-493a7bc782e1" />
+
+
 ## 🧪 Unit Testing
 
 Unit tests are implemented using **Jest** and **React Testing Library** to ensure reliability, correct functionality, and maintainable code.  
