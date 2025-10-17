@@ -1,38 +1,63 @@
+// src/router/routes.tsx
 
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Login from '../pages/login/Login';
 import Dashboard from '../pages/dashboard/Dashboard';
-import ProtectedRoute from './ProtectedRoute'
+import ProtectedRoute from './ProtectedRoute';
+
+// Import all the components that will be rendered inside the dashboard
+import DashboardContent from '../pages/dashboard/DashboardContent';
+import LeavePlannerContent from '../pages/dashboard/LeavePlannerContent';
+import ApplyLeaveContent from '../pages/dashboard/ApplyLeaveContent';
+import ReviewAllLeaves from '../pages/dashboard/ReviewAllLeaves';
+import AdminManageContent from '../pages/dashboard/AdminManageContent';
 
 export const router = createBrowserRouter([
   { 
     path: '/login', 
     element: <Login /> 
   },
-  // {
-  //   path: '/dashboard',
-  //   element: <Dashboard />
-  // },
   {
-    // Protect the dashboard and all future main app routes
+    path: '/',
     element: <ProtectedRoute />, 
     children: [
       {
-        path: '/dashboard', // The main authenticated route
+        path: 'dashboard', 
         element: <Dashboard />,
+        // These are the nested routes that will render inside the Dashboard's <Outlet />
+        children: [
+          { 
+            index: true, // This makes DashboardContent the default for "/dashboard"
+            element: <DashboardContent /> 
+          },
+          { 
+            path: 'planner', 
+            element: <LeavePlannerContent /> 
+          },
+          { 
+            path: 'apply', 
+            element: <ApplyLeaveContent /> 
+          },
+          { 
+            path: 'review-all', 
+            element: <ReviewAllLeaves /> 
+          },
+          { 
+            path: 'manage-users', 
+            element: <AdminManageContent /> 
+          },
+        ]
       },
+      // Automatically redirect from the root path '/' to '/dashboard'
       {
-        path: '/', // Redirect root path to dashboard if authenticated
-        element: <Dashboard />,
-      },
-      // You will add more protected routes here later, e.g., /leaves, /apply
+        index: true,
+        element: <Navigate to="/dashboard" replace />
+      }
     ]
   },
+  // A catch-all route to redirect any unknown path back to the dashboard
   { 
     path: '*', 
-    element: <ProtectedRoute>
-              {/* Optional: Add a 404 page here */}
-              <Dashboard /> 
-            </ProtectedRoute>, // Ensure unknown paths also go through auth check
+    element: <Navigate to="/dashboard" replace />,
   }, 
 ]);
