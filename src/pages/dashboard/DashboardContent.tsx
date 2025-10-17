@@ -5,6 +5,11 @@ import type { RootState } from '../../store/store';
 export default function DashboardContent() {
   const { username, role, leaveBalance, leavesTaken } = useSelector((state: RootState) => state.auth);
   
+  // Logic to ensure leave balance is never displayed as negative (shows 0 instead)
+  const displayedLeaveBalance = leaveBalance === null || leaveBalance === undefined
+    ? '...'
+    : Math.max(0, leaveBalance); // CRITICAL FIX: Ensures value is 0 or positive
+
   const pendingRequests = useSelector((state: RootState) => 
     state.leaves.leaves.filter(l => l.status === 'PENDING').length
   );
@@ -40,7 +45,8 @@ export default function DashboardContent() {
           <div className="card shadow-sm border-primary h-100">
             <div className="card-body text-center">
               <h5 className="card-title text-primary">Leave Balance</h5>
-              <p className="card-text display-4 fw-bold">{leaveBalance ?? '...'}</p>
+              {/* This line uses the corrected value */}
+              <p className="card-text display-4 fw-bold">{displayedLeaveBalance}</p>
               <p className="text-muted small mb-0">Days Remaining</p>
             </div>
           </div>
