@@ -1,43 +1,53 @@
-// src/pages/dashboard/ReviewAllLeaves.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../store/store';
 import { fetchAllLeavesThunk } from '../../store/leaves/leavesThunks';
 import LeaveTable, { type Leave } from './components/LeaveTable';
+import Pagination from './components/Pagination'; 
 
 export default function ReviewAllLeaves() {
   const dispatch = useDispatch<AppDispatch>();
   const { leaves, status, error } = useSelector((state: RootState) => state.leaves);
   
-  // State for the status filter
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
-  // --- NEW: State for the name filter ---
   const [nameFilter, setNameFilter] = useState<string>('');
+  
+  // --- NEW: State for pagination ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10;
 
   useEffect(() => {
     dispatch(fetchAllLeavesThunk());
   }, [dispatch]);
 
-  // --- UPDATED: Chained filtering logic ---
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, nameFilter]);
+
   const filteredLeaves = leaves
     .filter((leave: Leave) => {
-      // First, filter by status
       if (statusFilter === 'ALL') return true;
       return leave.status === statusFilter;
     })
     .filter((leave: Leave) => {
-      // Then, filter the result by employee name (case-insensitive)
       if (nameFilter === '') return true;
       return leave.employeeName.toLowerCase().includes(nameFilter.toLowerCase());
     });
+
+  // --- NEW: Pagination Logic ---
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+  const currentRecords = filteredLeaves.slice(indexOfFirstRecord, indexOfLastRecord);
+  const totalPages = Math.ceil(filteredLeaves.length / recordsPerPage);
 
   let content;
 
   if (status === 'loading') {
     content = <div className="text-center p-5">Loading all leave requests...</div>;
   } else if (status === 'succeeded') {
-    content = <LeaveTable leaves={filteredLeaves} isAdminView={true} />;
+    // Pass the paginated records to the table
+    content = <LeaveTable leaves={currentRecords} isAdminView={true} />;
   } else if (status === 'failed') {
     content = <div className="alert alert-danger">Error: {error}</div>;
   }
@@ -48,10 +58,8 @@ export default function ReviewAllLeaves() {
         <h4 className="mb-0">Review All Employee Leaves</h4>
       </div>
       <div className="card-body">
-        {/* Filter Controls */}
+        {/* Filter controls are unchanged */}
         <div className="d-flex justify-content-between align-items-center mb-3">
-          
-          {/* --- NEW: Search Input Field --- */}
           <div className="input-group" style={{ maxWidth: '300px' }}>
             <span className="input-group-text">
               <i className="bi bi-search"></i>
@@ -64,8 +72,6 @@ export default function ReviewAllLeaves() {
               onChange={(e) => setNameFilter(e.target.value)}
             />
           </div>
-
-          {/* Status Filter Buttons */}
           <div className="btn-group">
             <button className={`btn btn-outline-secondary ${statusFilter === 'ALL' && 'active'}`} onClick={() => setStatusFilter('ALL')}>All</button>
             <button className={`btn btn-outline-warning ${statusFilter === 'PENDING' && 'active'}`} onClick={() => setStatusFilter('PENDING')}>Pending</button>
@@ -75,6 +81,13 @@ export default function ReviewAllLeaves() {
         </div>
         
         {content}
+
+        {/* --- NEW: Render the Pagination component --- */}
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </div>
     </div>
   );
