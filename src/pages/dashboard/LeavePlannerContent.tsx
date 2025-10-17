@@ -1,17 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import LeaveTable, { type Leave } from './components/LeaveTable';
-
-// Mock data representing only the logged-in employee's leaves
-const mockMyLeaves: Leave[] = [
-  { id: 2, employeeName: 'employee', reason: 'Doctor\'s appointment', startDate: '2025-11-15', endDate: '2025-11-15', status: 'PENDING' },
-  { id: 5, employeeName: 'employee', reason: 'Personal', startDate: '2025-12-05', endDate: '2025-12-06', status: 'APPROVED' },
-  { id: 8, employeeName: 'employee', reason: 'Conference', startDate: '2025-10-20', endDate: '2025-10-22', status: 'REJECTED' },
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { type AppDispatch, type RootState } from '../../store/store';
+import { fetchMyLeavesThunk } from '../../store/leaves/leavesThunks';
+import LeaveTable from './components/LeaveTable';
 
 export default function LeavePlannerContent() {
-  // We remove 'setLeaves' since it's not used yet
-  const [leaves] = useState<Leave[]>(mockMyLeaves);
+  const dispatch = useDispatch<AppDispatch>();
+  const { leaves, status, error } = useSelector((state: RootState) => state.leaves);
+
+  // Fetch data from the API when the component loads
+  useEffect(() => {
+    // Only fetch if the data is not already loaded or loading
+    if (status === 'idle') {
+      dispatch(fetchMyLeavesThunk());
+    }
+  }, [status, dispatch]);
+
+  let content;
+
+  if (status === 'loading') {
+    content = <div className="text-center p-5">Loading your leave requests...</div>;
+  } else if (status === 'succeeded') {
+    content = <LeaveTable leaves={leaves} isAdminView={false} />;
+  } else if (status === 'failed') {
+    content = <div className="alert alert-danger">Error: {error}</div>;
+  }
 
   return (
     <div className="card shadow-sm">
@@ -22,7 +36,7 @@ export default function LeavePlannerContent() {
         </Link>
       </div>
       <div className="card-body">
-        <LeaveTable leaves={leaves} isAdminView={false} />
+        {content}
       </div>
     </div>
   );

@@ -1,40 +1,42 @@
-// src/pages/dashboard/ApplyLeaveContent.tsx
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { type AppDispatch, type RootState } from '../../store/store';
+import { createLeaveThunk } from '../../store/leaves/leavesThunks';
 
 export default function ApplyLeaveContent() {
-  // State to hold the form data
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { status, error } = useSelector((state: RootState) => state.leaves);
+  
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
-  const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent the browser from reloading
+    e.preventDefault();
 
-    // Basic validation
-    if (!fromDate || !toDate || !reason) {
-      setError('All fields are required.');
+    if (!startDate || !endDate || !reason) {
+      setFormError('All fields are required.');
       return;
     }
-    if (new Date(fromDate) > new Date(toDate)) {
-      setError('The "From Date" cannot be after the "To Date".');
+    if (new Date(startDate) > new Date(endDate)) {
+      setFormError('The "From Date" cannot be after the "To Date".');
       return;
     }
-    setError('');
+    setFormError('');
 
-    // For now, we'll just log the data to the console.
-    // Later, you will dispatch a Redux action here.
-    console.log({
-      fromDate,
-      toDate,
-      reason,
-    });
-
-    alert('Leave request submitted successfully!');
-    // Optionally, clear the form
-    setFromDate('');
-    setToDate('');
-    setReason('');
+    dispatch(createLeaveThunk({ startDate, endDate, reason }))
+      .unwrap()
+      .then(() => {
+        alert('Leave request submitted successfully!');
+        navigate('/dashboard/planner'); // Redirect on success
+      })
+      .catch((err) => {
+        // The error from the thunk is handled by the slice, but we can show it in the form too
+        setFormError(err || 'An unknown error occurred.');
+      });
   };
 
   return (
@@ -44,27 +46,27 @@ export default function ApplyLeaveContent() {
       </div>
       <div className="card-body">
         <form onSubmit={handleSubmit}>
-          {error && <div className="alert alert-danger">{error}</div>}
-
+          {formError && <div className="alert alert-danger">{formError}</div>}
+          
           <div className="row mb-3">
             <div className="col-md-6">
-              <label htmlFor="fromDate" className="form-label">From Date</label>
+              <label htmlFor="startDate" className="form-label">From Date</label>
               <input 
                 type="date" 
                 className="form-control" 
-                id="fromDate" 
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
+                id="startDate" 
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
               />
             </div>
             <div className="col-md-6">
-              <label htmlFor="toDate" className="form-label">To Date</label>
+              <label htmlFor="endDate" className="form-label">To Date</label>
               <input 
                 type="date" 
                 className="form-control" 
-                id="toDate" 
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
+                id="endDate" 
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
           </div>
@@ -81,8 +83,16 @@ export default function ApplyLeaveContent() {
           </div>
 
           <div className="d-flex justify-content-end">
-            <button type="button" className="btn btn-secondary me-2">Cancel</button>
-            <button type="submit" className="btn btn-primary">Submit</button>
+            <button 
+              type="button" 
+              className="btn btn-secondary me-2" 
+              onClick={() => navigate(-1)} // Go back to the previous page
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary" disabled={status === 'loading'}>
+              {status === 'loading' ? 'Submitting...' : 'Submit'}
+            </button>
           </div>
         </form>
       </div>

@@ -1,6 +1,8 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { type AppDispatch } from '../../../store/store';
+import { updateLeaveStatusThunk, deleteLeaveThunk } from '../../../store/leaves/leavesThunks';
 
-// This defines what a single leave object looks like
 export type Leave = {
   id: number;
   employeeName: string;
@@ -10,20 +12,29 @@ export type Leave = {
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
 };
 
-// This defines the props our table component will accept
 interface LeaveTableProps {
   leaves: Leave[];
-  isAdminView: boolean; // Controls whether to show the employee name column
+  isAdminView: boolean;
 }
 
 export default function LeaveTable({ leaves, isAdminView }: LeaveTableProps) {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleApprove = (id: number) => {
+    dispatch(updateLeaveStatusThunk({ id, status: 'APPROVED' }));
+  };
+
+  const handleReject = (id: number) => {
+    dispatch(updateLeaveStatusThunk({ id, status: 'REJECTED' }));
+  };
   
-  const handleApprove = (id: number) => alert(`Approve action for leave ID: ${id}`);
-  const handleReject = (id: number) => alert(`Reject action for leave ID: ${id}`);
-  const handleEdit = (id: number) => alert(`Edit action for leave ID: ${id}`);
+  const handleEdit = (id: number) => {
+    alert(`Editing functionality for leave ID ${id} is not yet implemented.`);
+  };
+
   const handleCancel = (id: number) => {
     if (window.confirm('Are you sure you want to cancel this leave request?')) {
-      alert(`Cancel action for leave ID: ${id}`);
+      dispatch(deleteLeaveThunk(id));
     }
   };
 
@@ -64,19 +75,17 @@ export default function LeaveTable({ leaves, isAdminView }: LeaveTableProps) {
                 <td><span className={getStatusBadge(leave.status)}>{leave.status}</span></td>
                 <td className="text-end">
                   {isAdminView ? (
-                    // --- START OF FIX ---
-                    // Admin Actions now have text for clarity
-                    <>
-                      <button className="btn btn-sm btn-success me-2" onClick={() => handleApprove(leave.id)}>
-                        <i className="bi bi-check-lg me-1"></i> Approve
-                      </button>
-                      <button className="btn btn-sm btn-danger" onClick={() => handleReject(leave.id)}>
-                        <i className="bi bi-x-lg me-1"></i> Reject
-                      </button>
-                    </>
-                    // --- END OF FIX ---
+                    leave.status === 'PENDING' && (
+                      <>
+                        <button className="btn btn-sm btn-success me-2" onClick={() => handleApprove(leave.id)}>
+                          <i className="bi bi-check-lg me-1"></i> Approve
+                        </button>
+                        <button className="btn btn-sm btn-danger" onClick={() => handleReject(leave.id)}>
+                          <i className="bi bi-x-lg me-1"></i> Reject
+                        </button>
+                      </>
+                    )
                   ) : (
-                    // Employee Actions (only show if status is PENDING)
                     leave.status === 'PENDING' && (
                       <>
                         <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleEdit(leave.id)}>
