@@ -15,6 +15,7 @@ import storage from 'redux-persist/lib/storage';
 
 import authReducer from './auth/authSlice';
 import leavesReducer from './leaves/leavesSlice';
+import usersReducer from './users/usersSlice';
 
 // Configuration for redux-persist
 const persistConfig = {
@@ -27,6 +28,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   leaves: leavesReducer,
+  users: usersReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
