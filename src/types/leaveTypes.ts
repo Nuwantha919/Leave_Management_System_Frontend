@@ -4,7 +4,7 @@ export interface Leave {
   startDate: string; // e.g., "2025-12-10"
   endDate: string;
   reason: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+    status: 'PENDING' | 'APPROVED' | 'REJECTED';
   employeeId: number;
   employeeName: string;
 }
