@@ -5,6 +5,14 @@ import { type AppDispatch, type RootState } from '../../store/store';
 import { createLeaveThunk } from '../../store/leaves/leavesThunks';
 import { toast } from 'react-toastify';
 
+// Defines the structure for field-specific errors
+interface FormErrors {
+  startDate?: string;
+  endDate?: string;
+  reason?: string;
+  form?: string; // For general/API errors
+}
+
 export default function ApplyLeaveContent() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -13,24 +21,47 @@ export default function ApplyLeaveContent() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
-  const [formError, setFormError] = useState('');
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation for required fields
-    if (!startDate || !endDate || !reason) {
-      toast.error('All fields are required.'); // for errors
-      setFormError('All fields are required.');
+    const newErrors: FormErrors = {};
+    const today = new Date();
+    // Normalize date to midnight for accurate comparison
+    today.setHours(0, 0, 0, 0); 
+    
+    // 1. Required fields validation
+    if (!startDate) newErrors.startDate = 'From Date is required.';
+    if (!endDate) newErrors.endDate = 'To Date is required.';
+    if (!reason) newErrors.reason = 'Reason is required.';
+
+    // 2. Past Date Validation
+    if (startDate && new Date(startDate) < today) {
+      newErrors.startDate = 'From Date cannot be in the past.';
+    }
+    if (endDate && new Date(endDate) < today) {
+      newErrors.endDate = 'To Date cannot be in the past.';
+    }
+    
+    // 3. Date Range Validation (Run only if dates are present and not already marked as past dates)
+    if (startDate && endDate && !newErrors.startDate && !newErrors.endDate) {
+      if (new Date(startDate) > new Date(endDate)) {
+        newErrors.form = 'The "From Date" cannot be after the "To Date".';
+        toast.warn(newErrors.form);
+      }
+    }
+    
+    setErrors(newErrors);
+
+    // Stop submission if validation failed
+    if (Object.keys(newErrors).length > 0) {
+      if (!newErrors.form) toast.error('Please fix the errors in the form.');
       return;
     }
-    // Validation for date range 
-    if (new Date(startDate) > new Date(endDate)) {
-      toast.warn('The "From Date" cannot be after the "To Date".'); // Use toast for warnings
-      setFormError('The "From Date" cannot be after the "To Date".');
-      return;
-    }
-    setFormError('');
+
+    // Clear previous errors and dispatch action
+    setErrors({}); 
 
     dispatch(createLeaveThunk({ startDate, endDate, reason }))
       .unwrap()
@@ -39,10 +70,22 @@ export default function ApplyLeaveContent() {
         navigate('/dashboard/planner');
       })
       .catch((err) => {
-        // Use toast for API errors
-        toast.error(err || 'An unknown error occurred.');
-        setFormError(err || 'An unknown error occurred.');
+        const apiError = err || 'An unknown error occurred.';
+        toast.error(apiError);
+        setErrors({ form: apiError }); 
       });
+  };
+
+  // Helper for date input change
+  const handleDateChange = (setter: React.Dispatch<React.SetStateAction<string>>, field: keyof FormErrors) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setter(e.target.value);
+    setErrors(prev => ({ ...prev, [field]: undefined, form: undefined }));
+  };
+
+  // Helper for reason textarea change
+  const handleReasonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReason(e.target.value);
+    setErrors(prev => ({ ...prev, reason: undefined, form: undefined }));
   };
 
   return (
@@ -52,40 +95,43 @@ export default function ApplyLeaveContent() {
       </div>
       <div className="card-body">
         <form onSubmit={handleSubmit}>
-          {formError && <div className="alert alert-danger small p-2">{formError}</div>}
+          {errors.form && <div className="alert alert-danger small p-2">{errors.form}</div>}
           
           <div className="row mb-3">
             <div className="col-md-6">
               <label htmlFor="startDate" className="form-label">From Date</label>
               <input 
                 type="date" 
-                className="form-control" 
+                className={`form-control ${errors.startDate ? 'is-invalid' : ''}`} 
                 id="startDate" 
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={handleDateChange(setStartDate, 'startDate')}
               />
+              {errors.startDate && <div className="invalid-feedback">{errors.startDate}</div>}
             </div>
             <div className="col-md-6">
               <label htmlFor="endDate" className="form-label">To Date</label>
               <input 
                 type="date" 
-                className="form-control" 
+                className={`form-control ${errors.endDate ? 'is-invalid' : ''}`} 
                 id="endDate" 
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={handleDateChange(setEndDate, 'endDate')}
               />
+              {errors.endDate && <div className="invalid-feedback">{errors.endDate}</div>}
             </div>
           </div>
 
           <div className="mb-3">
             <label htmlFor="reason" className="form-label">Reason</label>
             <textarea 
-              className="form-control" 
+              className={`form-control ${errors.reason ? 'is-invalid' : ''}`} 
               id="reason" 
               rows={4}
               value={reason}
-              onChange={(e) => setReason(e.target.value)}
+              onChange={handleReasonChange}
             ></textarea>
+            {errors.reason && <div className="invalid-feedback">{errors.reason}</div>}
           </div>
 
           <div className="d-flex justify-content-end">
@@ -96,7 +142,11 @@ export default function ApplyLeaveContent() {
             >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" disabled={status === 'loading'}>
+            <button 
+              type="submit" 
+              className="btn btn-primary" 
+              disabled={status === 'loading'}
+            >
               {status === 'loading' ? 'Submitting...' : 'Submit'}
             </button>
           </div>
