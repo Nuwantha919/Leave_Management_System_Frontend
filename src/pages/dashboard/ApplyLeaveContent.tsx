@@ -89,20 +89,32 @@ export default function ApplyLeaveContent() {
   };
 
   return (
-    <div className="card shadow-sm" style={{ maxWidth: '600px', margin: 'auto' }}>
-      <div className="card-header">
-        <h4 className="mb-0">Apply for Leave</h4>
+    <div className="card shadow-sm modern-card" style={{ maxWidth: '700px', margin: 'auto' }}>
+      <div className="card-header gradient-header">
+        <div className="d-flex align-items-center">
+          <div className="icon-wrapper me-3">
+            <i className="bi bi-calendar-plus"></i>
+          </div>
+          <h4 className="mb-0">Apply for Leave</h4>
+        </div>
       </div>
-      <div className="card-body">
+      <div className="card-body p-4">
         <form onSubmit={handleSubmit}>
-          {errors.form && <div className="alert alert-danger small p-2">{errors.form}</div>}
+          {errors.form && (
+            <div className="alert alert-danger d-flex align-items-center mb-3">
+              <i className="bi bi-exclamation-triangle-fill me-2"></i>
+              {errors.form}
+            </div>
+          )}
           
-          <div className="row mb-3">
+          <div className="row mb-4">
             <div className="col-md-6">
-              <label htmlFor="startDate" className="form-label">From Date</label>
+              <label htmlFor="startDate" className="form-label fw-semibold">
+                <i className="bi bi-calendar-event me-2"></i>From Date
+              </label>
               <input 
                 type="date" 
-                className={`form-control ${errors.startDate ? 'is-invalid' : ''}`} 
+                className={`form-control form-control-lg modern-input ${errors.startDate ? 'is-invalid' : ''}`} 
                 id="startDate" 
                 value={startDate}
                 onChange={handleDateChange(setStartDate, 'startDate')}
@@ -110,10 +122,12 @@ export default function ApplyLeaveContent() {
               {errors.startDate && <div className="invalid-feedback">{errors.startDate}</div>}
             </div>
             <div className="col-md-6">
-              <label htmlFor="endDate" className="form-label">To Date</label>
+              <label htmlFor="endDate" className="form-label fw-semibold">
+                <i className="bi bi-calendar-check me-2"></i>To Date
+              </label>
               <input 
                 type="date" 
-                className={`form-control ${errors.endDate ? 'is-invalid' : ''}`} 
+                className={`form-control form-control-lg modern-input ${errors.endDate ? 'is-invalid' : ''}`} 
                 id="endDate" 
                 value={endDate}
                 onChange={handleDateChange(setEndDate, 'endDate')}
@@ -122,32 +136,44 @@ export default function ApplyLeaveContent() {
             </div>
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="reason" className="form-label">Reason</label>
+          <div className="mb-4">
+            <label htmlFor="reason" className="form-label fw-semibold">
+              <i className="bi bi-pencil-square me-2"></i>Reason
+            </label>
             <textarea 
-              className={`form-control ${errors.reason ? 'is-invalid' : ''}`} 
+              className={`form-control modern-input ${errors.reason ? 'is-invalid' : ''}`} 
               id="reason" 
               rows={4}
+              placeholder="Enter reason for leave..."
               value={reason}
               onChange={handleReasonChange}
             ></textarea>
             {errors.reason && <div className="invalid-feedback">{errors.reason}</div>}
           </div>
 
-          <div className="d-flex justify-content-end">
+          <div className="d-flex justify-content-end gap-2">
             <button 
               type="button" 
-              className="btn btn-secondary me-2" 
+              className="btn btn-secondary modern-btn" 
               onClick={() => navigate(-1)}
             >
-              Cancel
+              <i className="bi bi-x-circle me-2"></i>Cancel
             </button>
             <button 
               type="submit" 
-              className="btn btn-primary" 
+              className="btn btn-primary modern-btn" 
               disabled={status === 'loading'}
             >
-              {status === 'loading' ? 'Submitting...' : 'Submit'}
+              {status === 'loading' ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-send me-2"></i>Submit
+                </>
+              )}
             </button>
           </div>
         </form>

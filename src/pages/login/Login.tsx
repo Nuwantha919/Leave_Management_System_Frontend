@@ -40,41 +40,41 @@ const { isLoading, error, isAuthenticated } = useSelector((state: RootState) => 
     );
   }
 
-  // ... (The rest of the component remains the same, showing the login form)
   return (
     <div
-      className="bg-white d-flex justify-content-center align-items-center"
+      className="d-flex justify-content-center align-items-center"
       style={{
         minHeight: "100vh",
         width: "100%",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
         overflow: "hidden",
       }}
     >
       <div
-        className="card shadow-lg border-0"
+        className="card border-0"
         style={{
           width: "100%",
-          maxWidth: "400px",
-          borderRadius: "16px",
+          maxWidth: "450px",
+          borderRadius: "20px",
+          boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
         }}
       >
-        <div className="card-body p-4">
-            {/* ... (Error display and form code remains the same) */}
+        <div className="card-body p-5">
             <div className="text-center mb-4">
                 <div
-                    className="d-inline-flex align-items-center justify-content-center bg-dark text-white rounded mb-2"
+                    className="d-inline-flex align-items-center justify-content-center mb-3"
                     style={{
-                        width: 100,
-                        height: 48,
-                        fontWeight: "bold",
-                        fontSize: 19,
-                        borderRadius: "14px",
+                        width: 80,
+                        height: 80,
+                        background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                        borderRadius: "20px",
+                        boxShadow: "0 8px 16px rgba(99, 102, 241, 0.3)",
                     }}
                 >
-                    Haulmatic
+                    <i className="bi bi-briefcase-fill text-white" style={{ fontSize: "2.5rem" }}></i>
                 </div>
-                <h4 className="fw-bold mb-1">Leave Management System</h4>
-                <p className="text-muted small mb-0">Sign in to continue</p>
+                <h3 className="fw-bold mb-2" style={{ color: "#1e293b" }}>Welcome Back</h3>
+                <p className="text-muted mb-0">Sign in to access your leave management</p>
             </div>
 
             {error && (
@@ -149,23 +149,39 @@ const { isLoading, error, isAuthenticated } = useSelector((state: RootState) => 
 
                 <button
                     type="submit"
-                    className="btn btn-dark w-100 fw-semibold"
-                    style={{ padding: "10px" }}
+                    className="btn btn-primary w-100 fw-semibold"
+                    style={{ 
+                        padding: "14px",
+                        fontSize: "1rem",
+                        background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                        border: "none",
+                        boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
+                    }}
                     disabled={isLoading} 
                 >
-                    {isLoading ? 'Signing In...' : 'Sign in'} 
+                    {isLoading ? (
+                        <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Signing In...
+                        </>
+                    ) : (
+                        <>
+                            <i className="bi bi-box-arrow-in-right me-2"></i>
+                            Sign In
+                        </>
+                    )}
                 </button>
             </form>
 
-            <p className="text-center text-muted small mt-3 mb-0">
+            <p className="text-center text-muted small mt-4 mb-0">
                 By continuing you agree to our{" "}
-                <a href="#" className="text-decoration-underline text-dark">
+                <a href="#" style={{ color: "#6366f1", textDecoration: "none", fontWeight: 500 }}>
                     Terms
                 </a>{" "}
                 and{" "}
-                <a href="#" className="text-decoration-underline text-dark">
+                <a href="#" style={{ color: "#6366f1", textDecoration: "none", fontWeight: 500 }}>
                     Privacy Policy
-                </a>.
+                </a>
             </p>
         </div>
       </div>

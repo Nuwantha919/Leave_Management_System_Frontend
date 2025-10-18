@@ -52,12 +52,19 @@ export default function LeavePlannerContent() {
   }
 
   return (
-    <div className="card shadow-sm">
-      <div className="card-header d-flex justify-content-between align-items-center">
-        <h4 className="mb-0">My Leave Planner & History</h4>
-        <Link to="/dashboard/apply" className="btn btn-primary">
-          <i className="bi bi-plus-circle me-2"></i>Apply for Leave
-        </Link>
+    <div className="card shadow-sm modern-card">
+      <div className="card-header gradient-header">
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center">
+            <div className="icon-wrapper me-3">
+              <i className="bi bi-calendar2-week"></i>
+            </div>
+            <h4 className="mb-0">My Leave Planner & History</h4>
+          </div>
+          <Link to="/dashboard/apply" className="btn btn-light modern-btn">
+            <i className="bi bi-plus-circle me-2"></i>Apply for Leave
+          </Link>
+        </div>
       </div>
       <div className="card-body">
         {content}
