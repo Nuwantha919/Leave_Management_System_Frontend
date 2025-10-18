@@ -1,3 +1,7 @@
+// Mock the api module to avoid import.meta issues
+jest.mock('../../../services/api');
+jest.mock('../../../services/leaveService');
+
 import leavesReducer from '../leavesSlice';
 import { 
   createLeaveThunk, 
