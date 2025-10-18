@@ -13,6 +13,7 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     dispatch(logout());
+    persistor.purge();
     toast.info("You have been successfully logged out.");
     navigate('/login');
   };
