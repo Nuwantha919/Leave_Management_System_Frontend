@@ -1,6 +1,5 @@
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { type RootState, type AppDispatch } from '../../store/store';
+import { type RootState, type AppDispatch, persistor } from '../../store/store';
 import { logout } from '../../store/auth/authSlice';
 import { useNavigate, Outlet } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
