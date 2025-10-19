@@ -5,15 +5,16 @@ import type {
 } from './../store/auth/AuthTypes'; 
 
 /**
- * Calls the public /login endpoint.
- * We use a direct axios call here because it's a public route and
- * outside our '/api' base path which is configured for authenticated routes.
+ * Calls the public /login endpoint through nginx proxy.
+ * Nginx will forward /login to backend:8080/login internally.
  */
 export const login = async (
   credentials: LoginRequestData
 ): Promise<LoginResponseData> => {
   try {
-    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/login`, credentials);
+    // Use relative URL - nginx will proxy to backend
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || '';
+    const response = await axios.post(`${baseUrl}/login`, credentials);
     return response.data;
   } catch (error: any) {
     // Re-throw a cleaner error message for the thunk to catch
