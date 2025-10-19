@@ -1,14 +1,12 @@
-# Stage 1: Build
-FROM node:18 AS build
+# Build frontend static files
+FROM node:20.19.0-alpine AS build
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
 COPY . .
-RUN npm run build
+RUN npm install && npm run build
 
-# Stage 2: Nginx
-FROM nginx:stable-alpine
+# Serve with nginx
+FROM nginx:1.25-alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
