@@ -18,8 +18,9 @@ export default function AdminManageContent() {
 
     dispatch(createUserThunk({ username, password, role, maximumLeaveCount }))
       .unwrap()
-      .then((newUser) => {
-        toast.success(`Successfully registered user: ${newUser.username}`);
+      .then((response) => {
+        // Display the backend's success message
+        toast.success(response.message || `Successfully registered user: ${response.username}`);
         setUsername('');
         setPassword('');
         setRole('EMPLOYEE');
