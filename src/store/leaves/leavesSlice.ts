@@ -39,7 +39,6 @@ const leavesSlice = createSlice({
         state.status = 'succeeded';
       })
 
-      // --- REFINEMENT ---
       // Matcher for any successful UPDATE or EDIT action
       .addMatcher(
         isAnyOf(updateLeaveStatusThunk.fulfilled, editLeaveThunk.fulfilled),
@@ -51,7 +50,6 @@ const leavesSlice = createSlice({
           state.status = 'succeeded';
         }
       )
-      // --- END REFINEMENT ---
       
       // Matcher for handling FETCH states
       .addMatcher(

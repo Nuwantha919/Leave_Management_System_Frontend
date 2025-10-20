@@ -33,7 +33,7 @@ export const loginUser = createAsyncThunk<
       return user; 
 
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'An unknown login error occurred.';
+      const message = error instanceof Error ? error.message : 'Login failed.';
       return rejectWithValue(message); 
     }
   }

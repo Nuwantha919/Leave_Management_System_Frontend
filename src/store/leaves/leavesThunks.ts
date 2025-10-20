@@ -41,7 +41,7 @@ export const fetchAllLeavesThunk = createAsyncThunk(
 );
 
 
-// --- ACTION THUNKS (New additions) ---
+// --- ACTION THUNKS ---
 
 /**
  * Thunk to create a new leave request.
