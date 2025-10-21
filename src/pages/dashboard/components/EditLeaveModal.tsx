@@ -48,51 +48,72 @@ export default function EditLeaveModal({ show, onHide, leave, onSaveChanges }: E
   }
 
   return (
-    <div className="modal show" tabIndex={-1} style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal show" tabIndex={-1} style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
       <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Edit Leave Request</h5>
-            <button type="button" className="btn-close" onClick={onHide}></button>
+        <div className="modal-content modern-card shadow-lg border-0">
+          <div className="modal-header gradient-header border-0">
+            <h5 className="modal-title d-flex align-items-center mb-0">
+              <div className="icon-wrapper me-3" style={{ fontSize: '1rem' }}>
+                <i className="bi bi-pencil-square"></i>
+              </div>
+              Edit Leave Request
+            </h5>
+            <button type="button" className="btn-close btn-close-white" onClick={onHide}></button>
           </div>
-          <div className="modal-body">
+          <div className="modal-body p-4">
             <form onSubmit={handleSubmit}>
-              {error && <div className="alert alert-danger">{error}</div>}
+              {error && (
+                <div className="alert alert-danger d-flex align-items-center mb-3">
+                  <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                  {error}
+                </div>
+              )}
               
               <div className="mb-3">
-                <label htmlFor="editStartDate" className="form-label">From Date</label>
+                <label htmlFor="editStartDate" className="form-label fw-semibold">
+                  <i className="bi bi-calendar-event me-2"></i>From Date
+                </label>
                 <input
                   type="date"
-                  className="form-control"
+                  className="form-control modern-input"
                   id="editStartDate"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="editEndDate" className="form-label">To Date</label>
+                <label htmlFor="editEndDate" className="form-label fw-semibold">
+                  <i className="bi bi-calendar-check me-2"></i>To Date
+                </label>
                 <input
                   type="date"
-                  className="form-control"
+                  className="form-control modern-input"
                   id="editEndDate"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="editReason" className="form-label">Reason</label>
+                <label htmlFor="editReason" className="form-label fw-semibold">
+                  <i className="bi bi-pencil-square me-2"></i>Reason
+                </label>
                 <textarea
-                  className="form-control"
+                  className="form-control modern-input"
                   id="editReason"
                   rows={3}
+                  placeholder="Enter reason for leave..."
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                 ></textarea>
               </div>
 
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={onHide}>Close</button>
-                <button type="submit" className="btn btn-primary">Save Changes</button>
+              <div className="modal-footer border-0 px-0 pt-3">
+                <button type="button" className="btn btn-secondary modern-btn" onClick={onHide}>
+                  <i className="bi bi-x-circle me-2"></i>Close
+                </button>
+                <button type="submit" className="btn btn-primary modern-btn">
+                  <i className="bi bi-check-circle me-2"></i>Save Changes
+                </button>
               </div>
             </form>
           </div>

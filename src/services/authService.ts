@@ -13,7 +13,7 @@ export const login = async (
   credentials: LoginRequestData
 ): Promise<LoginResponseData> => {
   try {
-    const response = await axios.post('http://localhost:8080/login', credentials);
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/login`, credentials);
     return response.data;
   } catch (error: any) {
     // Re-throw a cleaner error message for the thunk to catch

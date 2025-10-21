@@ -19,7 +19,7 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      Object.assign(state, initialState);
+      Object.assign(state, initialState); //IMMER: direct "mutation" of the draft state
     },
   },
   extraReducers: (builder) => {

@@ -1,5 +1,6 @@
-import React, { useState } from 'react'; // Import useState
+import { useState } from 'react'; // Import useState
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import { type AppDispatch } from '../../../store/store';
 import { 
   updateLeaveStatusThunk, 
@@ -29,12 +30,42 @@ export default function LeaveTable({ leaves, isAdminView }: LeaveTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState<Leave | null>(null);
 
-  const handleApprove = (id: number) => {
-    dispatch(updateLeaveStatusThunk({ id, status: 'APPROVED' }));
+  const handleApprove = async (id: number) => {
+    try {
+      await dispatch(updateLeaveStatusThunk({ id, status: 'APPROVED' })).unwrap();
+      toast.success('Leave request approved successfully!', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch {
+      toast.error('Failed to approve leave request. Please try again.', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+    }
   };
 
-  const handleReject = (id: number) => {
-    dispatch(updateLeaveStatusThunk({ id, status: 'REJECTED' }));
+  const handleReject = async (id: number) => {
+    try {
+      await dispatch(updateLeaveStatusThunk({ id, status: 'REJECTED' })).unwrap();
+      toast.info('Leave request rejected.', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch {
+      toast.error('Failed to reject leave request. Please try again.', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+    }
   };
   
   // This function now opens the modal with the selected leave's data
@@ -43,18 +74,48 @@ export default function LeaveTable({ leaves, isAdminView }: LeaveTableProps) {
     setIsModalOpen(true);
   };
   
-  const handleCancel = (id: number) => {
+  const handleCancel = async (id: number) => {
     if (window.confirm('Are you sure you want to cancel this leave request?')) {
-      dispatch(deleteLeaveThunk(id));
+      try {
+        await dispatch(deleteLeaveThunk(id)).unwrap();
+        toast.success('Leave request cancelled successfully!', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } catch {
+        toast.error('Failed to cancel leave request. Please try again.', {
+          position: 'top-right',
+          autoClose: 3000,
+        });
+      }
     }
   };
 
   // This function is called from the modal to dispatch the update action
-  const handleSaveChanges = (updatedData: { startDate: string; endDate: string; reason: string }) => {
+  const handleSaveChanges = async (updatedData: { startDate: string; endDate: string; reason: string }) => {
     if (selectedLeave) {
-      dispatch(editLeaveThunk({ id: selectedLeave.id, updatedData }));
-      setIsModalOpen(false); // Close the modal on save
-      setSelectedLeave(null);
+      try {
+        await dispatch(editLeaveThunk({ id: selectedLeave.id, updatedData })).unwrap();
+        toast.success('Leave request updated successfully!', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        setIsModalOpen(false); // Close the modal on save
+        setSelectedLeave(null);
+      } catch {
+        toast.error('Failed to update leave request. Please try again.', {
+          position: 'top-right',
+          autoClose: 3000,
+        });
+      }
     }
   };
 
@@ -71,8 +132,8 @@ export default function LeaveTable({ leaves, isAdminView }: LeaveTableProps) {
     // Wrap the JSX in a React Fragment to include the modal
     <>
       <div className="table-responsive">
-        <table className="table table-striped table-hover align-middle">
-          <thead className="table-dark">
+        <table className="table table-hover align-middle modern-table">
+          <thead>
             <tr>
               {isAdminView && <th scope="col">Employee Name</th>}
               <th scope="col">Dates</th>
@@ -84,25 +145,31 @@ export default function LeaveTable({ leaves, isAdminView }: LeaveTableProps) {
           <tbody>
             {leaves.length === 0 ? (
               <tr>
-                <td colSpan={isAdminView ? 5 : 4} className="text-center p-4 text-muted">
-                  No leave requests found.
+                <td colSpan={isAdminView ? 5 : 4} className="text-center p-5">
+                  <div className="text-muted">
+                    <i className="bi bi-inbox display-1 d-block mb-3 opacity-25"></i>
+                    <p className="mb-0">No leave requests found.</p>
+                  </div>
                 </td>
               </tr>
             ) : (
               leaves.map((leave) => (
-                <tr key={leave.id}>
-                  {isAdminView && <td>{leave.employeeName}</td>}
-                  <td>{leave.startDate} to {leave.endDate}</td>
-                  <td>{leave.reason}</td>
+                <tr key={leave.id} className="table-row-hover">
+                  {isAdminView && <td className="fw-medium">{leave.employeeName}</td>}
+                  <td>
+                    <i className="bi bi-calendar-range me-2 text-muted"></i>
+                    {leave.startDate} to {leave.endDate}
+                  </td>
+                  <td className="text-muted">{leave.reason}</td>
                   <td><span className={getStatusBadge(leave.status)}>{leave.status}</span></td>
                   <td className="text-end">
                     {isAdminView ? (
                       leave.status === 'PENDING' && (
                         <>
-                          <button className="btn btn-sm btn-success me-2" onClick={() => handleApprove(leave.id)}>
+                          <button className="btn btn-sm btn-success modern-btn me-2" onClick={() => handleApprove(leave.id)}>
                             <i className="bi bi-check-lg me-1"></i> Approve
                           </button>
-                          <button className="btn btn-sm btn-danger" onClick={() => handleReject(leave.id)}>
+                          <button className="btn btn-sm btn-danger modern-btn" onClick={() => handleReject(leave.id)}>
                             <i className="bi bi-x-lg me-1"></i> Reject
                           </button>
                         </>
@@ -112,13 +179,13 @@ export default function LeaveTable({ leaves, isAdminView }: LeaveTableProps) {
                         <>
                           {/* The Edit button now opens the modal */}
                           <button 
-                            className="btn btn-sm btn-outline-primary me-2" 
+                            className="btn btn-sm btn-outline-primary modern-btn me-2" 
                             onClick={() => handleEditClick(leave)}
                           >
-                            <i className="bi bi-pencil-square"></i> Edit
+                            <i className="bi bi-pencil-square me-1"></i> Edit
                           </button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => handleCancel(leave.id)}>
-                            <i className="bi bi-trash"></i> Cancel
+                          <button className="btn btn-sm btn-outline-danger modern-btn" onClick={() => handleCancel(leave.id)}>
+                            <i className="bi bi-trash me-1"></i> Cancel
                           </button>
                         </>
                       )

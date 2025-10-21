@@ -1,4 +1,4 @@
-jest.mock('../../store/store');
+jest.mock('../../../services/leaveService');
 import mockStore, { MockStore } from '../../../testUtils/mockStore';
 import { 
   createLeaveThunk, 

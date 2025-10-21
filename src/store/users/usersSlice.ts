@@ -20,7 +20,13 @@ const usersSlice = createSlice({
       })
       .addCase(createUserThunk.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.users.push(action.payload); // Add the newly created user to our list
+        // Extract user data without the message field
+        const { username, role, maximumLeaveCount } = action.payload;
+        state.users.push({ 
+          username, 
+          role: role as 'ADMIN' | 'EMPLOYEE', 
+          maximumLeaveCount 
+        });
       })
       .addCase(createUserThunk.rejected, (state, action) => {
         state.status = 'failed';
