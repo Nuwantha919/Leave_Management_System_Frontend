@@ -54,7 +54,8 @@ A **fully implemented, production-ready frontend** for managing employee leaves 
   - 👩‍💼 Admin → `admin / admin123`
   - 👨‍💻 Employee → `employee / emp123`
 
-<img width="602" height="505" alt="login" src="https://github.com/user-attachments/assets/610cc1e6-6c9e-44fe-ad1c-0482ba9d7459" />
+<img width="732" height="682" alt="login" src="https://github.com/user-attachments/assets/53ca17ef-bc25-4817-be2e-7ef646af8a7a" />
+
 
 ---
 
@@ -70,7 +71,8 @@ A **fully implemented, production-ready frontend** for managing employee leaves 
   - `/dashboard/manage-users` → Admin-only user registration
 - Role-based rendering ensures Admin and Employee dashboards differ.
 
-<img width="1909" height="784" alt="admin view" src="https://github.com/user-attachments/assets/a4f63d7e-569c-4af0-ba6b-ef69106687c8" />
+<img width="1902" height="884" alt="admin ui" src="https://github.com/user-attachments/assets/c230a8c1-ac8d-47e7-bee4-f7b65fc34055" />
+
 
 ---
 
@@ -102,8 +104,9 @@ A **fully implemented, production-ready frontend** for managing employee leaves 
 - Approve / Reject requests.
 - Filter by status.
 - Manage employees (create users).
+<img width="550" height="396" alt="leave apply" src="https://github.com/user-attachments/assets/cefd0ffe-389f-4d1a-94f4-ec8e4cf2ce47" />
 
-<img width="553" height="319" alt="leaveapply" src="https://github.com/user-attachments/assets/77bd281f-0264-4828-8251-1a59766fffa9" />
+
 
 ---
 
@@ -114,7 +117,8 @@ A **fully implemented, production-ready frontend** for managing employee leaves 
 - Pagination state stored in Redux for consistency.
 - Integrated seamlessly with filters and search.
 
-<img width="1667" height="590" alt="leave all" src="https://github.com/user-attachments/assets/74f3466d-9225-4b60-9b38-8a8f5f45a80b" />
+<img width="1678" height="743" alt="review leave" src="https://github.com/user-attachments/assets/aea34d2f-2ffd-488a-a40d-cfc24b5f5461" />
+
 
 ---
 
@@ -138,11 +142,13 @@ Real-time feedback for:
 - 📄 Leave creation/update/delete  
 - ⚙️ Admin approvals/rejections  
 - ❌ Invalid token or unauthorized actions  
+<img width="1917" height="943" alt="notification" src="https://github.com/user-attachments/assets/6fd0b8f1-6aa3-4b72-b063-8da0fba95487" />
 
-<img width="749" height="346" alt="notifications" src="https://github.com/user-attachments/assets/7bc6deda-96ce-400e-b18e-a3305333c463" />
+
 
 ## User Registration
-<img width="477" height="335" alt="userregistration" src="https://github.com/user-attachments/assets/c39a407b-cb61-44a4-9c18-493a7bc782e1" />
+<img width="538" height="417" alt="user register" src="https://github.com/user-attachments/assets/7841c19b-a43c-4cd2-9a77-9a5d09a78212" />
+
 
 
 ## 🧪 Unit Testing
