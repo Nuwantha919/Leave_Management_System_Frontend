@@ -104,7 +104,8 @@ A **fully implemented, production-ready frontend** for managing employee leaves 
 - Approve / Reject requests.
 - Filter by status.
 - Manage employees (create users).
-<img width="550" height="396" alt="leave apply" src="https://github.com/user-attachments/assets/cefd0ffe-389f-4d1a-94f4-ec8e4cf2ce47" />
+
+<img width="550" height="396" alt="leave apply" src="https://github.com/user-attachments/assets/5d53a8db-d30a-4631-9a4b-af71263b350a" />
 
 
 
@@ -130,7 +131,8 @@ A **fully implemented, production-ready frontend** for managing employee leaves 
   - `fromDate ≤ toDate`.
 - Instant feedback via inline messages.
 - Prevents submission until valid.
-<img width="493" height="316" alt="validation" src="https://github.com/user-attachments/assets/aa34f654-cb8a-4988-ab05-136da25fedaf" />
+<img width="568" height="404" alt="validation" src="https://github.com/user-attachments/assets/fcefb4e7-0d97-41ab-82b0-cd049f954eb7" />
+
 
 ---
 
