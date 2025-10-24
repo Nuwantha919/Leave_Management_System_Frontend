@@ -5,6 +5,7 @@ import { type Leave } from '../../types/leaveTypes';
 import { 
   fetchMyLeavesThunk, 
   fetchAllLeavesThunk,
+  fetchAllLeavesPaginatedThunk,
   createLeaveThunk,
   updateLeaveStatusThunk,
   deleteLeaveThunk,
@@ -15,12 +16,21 @@ interface LeavesState {
   leaves: Leave[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+  // Pagination metadata
+  currentPage: number;
+  totalPages: number;
+  totalElements: number;
+  pageSize: number;
 }
 
 const initialState: LeavesState = {
   leaves: [],
   status: 'idle',
   error: null,
+  currentPage: 0,
+  totalPages: 0,
+  totalElements: 0,
+  pageSize: 10,
 };
 
 const leavesSlice = createSlice({
@@ -29,6 +39,16 @@ const leavesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // Handle paginated fetch
+      .addCase(fetchAllLeavesPaginatedThunk.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.leaves = action.payload.content;
+        state.currentPage = action.payload.currentPage;
+        state.totalPages = action.payload.totalPages;
+        state.totalElements = action.payload.totalElements;
+        state.pageSize = action.payload.pageSize;
+      })
+      
       // Cases for when a leave is successfully CREATED or DELETED
       .addCase(createLeaveThunk.fulfilled, (state, action) => {
         state.leaves.push(action.payload);
@@ -65,6 +85,7 @@ const leavesSlice = createSlice({
         isAnyOf(
           fetchMyLeavesThunk.pending, 
           fetchAllLeavesThunk.pending, 
+          fetchAllLeavesPaginatedThunk.pending,
           createLeaveThunk.pending,
           updateLeaveStatusThunk.pending,
           deleteLeaveThunk.pending,
@@ -81,6 +102,7 @@ const leavesSlice = createSlice({
         isAnyOf(
           fetchMyLeavesThunk.rejected, 
           fetchAllLeavesThunk.rejected,
+          fetchAllLeavesPaginatedThunk.rejected,
           createLeaveThunk.rejected,
           updateLeaveStatusThunk.rejected,
           deleteLeaveThunk.rejected,

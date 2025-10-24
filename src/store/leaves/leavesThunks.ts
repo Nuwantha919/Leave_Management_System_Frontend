@@ -40,6 +40,21 @@ export const fetchAllLeavesThunk = createAsyncThunk(
   }
 );
 
+export const fetchAllLeavesPaginatedThunk = createAsyncThunk(
+  `${THUNK_PREFIX}/fetchAllLeavesPaginated`,
+  async (
+    { page, size, employeeName, status }: { page: number; size: number; employeeName?: string; status?: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const paginatedLeaves = await leaveService.fetchAllLeavesPaginated(page, size, employeeName, status);
+      return paginatedLeaves;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch paginated leaves');
+    }
+  }
+);
+
 
 // --- ACTION THUNKS ---
 

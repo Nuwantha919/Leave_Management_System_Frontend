@@ -15,6 +15,10 @@ interface LeavesState {
   leaves: Leave[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+  currentPage: number;
+  totalPages: number;
+  totalElements: number;
+  pageSize: number;
 }
 
 // Define a realistic mock state based on your LeavesState interface
@@ -25,6 +29,10 @@ const mockInitialState: LeavesState = {
   ],
   status: 'succeeded',
   error: null,
+  currentPage: 0,
+  totalPages: 1,
+  totalElements: 2,
+  pageSize: 10,
 };
 
 

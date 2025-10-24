@@ -1,11 +1,34 @@
 import api from './api';
-import { type Leave, type CreateLeaveDto } from '../types/leaveTypes';
+import { type Leave, type CreateLeaveDto, type PagedResponse } from '../types/leaveTypes';
 
 /**
  * Fetches all leaves. This is for the Admin view.
  */
 export const fetchAllLeaves = async (): Promise<Leave[]> => {
   const response = await api.get('/leaves');
+  return response.data;
+};
+
+/**
+ * Fetches paginated leaves with optional filters
+ * @param page - Page number (0-indexed)
+ * @param size - Number of items per page
+ * @param employeeName - Optional employee name filter
+ * @param status - Optional status filter
+ */
+export const fetchAllLeavesPaginated = async (
+  page: number = 0,
+  size: number = 10,
+  employeeName?: string,
+  status?: string
+): Promise<PagedResponse<Leave>> => {
+  const params = new URLSearchParams();
+  params.append('page', page.toString());
+  params.append('size', size.toString());
+  if (employeeName) params.append('employeeName', employeeName);
+  if (status && status !== 'ALL') params.append('status', status);
+  
+  const response = await api.get(`/leaves/paginated?${params.toString()}`);
   return response.data;
 };
 

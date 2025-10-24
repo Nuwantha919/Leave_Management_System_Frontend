@@ -1,50 +1,40 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../store/store';
-import { fetchAllLeavesThunk } from '../../store/leaves/leavesThunks';
-import LeaveTable, { type Leave } from './components/LeaveTable';
+import { fetchAllLeavesPaginatedThunk } from '../../store/leaves/leavesThunks';
+import LeaveTable from './components/LeaveTable';
 import Pagination from './components/Pagination';
 
 export default function ReviewAllLeaves() {
   const dispatch = useDispatch<AppDispatch>();
-  const { leaves, status, error } = useSelector((state: RootState) => state.leaves);
+  const { leaves, status, error, totalPages } = useSelector((state: RootState) => state.leaves);
 
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [nameFilter, setNameFilter] = useState<string>('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1); // UI uses 1-indexed pages
   const recordsPerPage = 10;
 
+  // Fetch data whenever filters or page changes
   useEffect(() => {
-    dispatch(fetchAllLeavesThunk());
-  }, [dispatch]);
+    dispatch(fetchAllLeavesPaginatedThunk({
+      page: page - 1, // Backend uses 0-indexed pages
+      size: recordsPerPage,
+      employeeName: nameFilter || undefined,
+      status: statusFilter !== 'ALL' ? statusFilter : undefined
+    }));
+  }, [dispatch, page, statusFilter, nameFilter]);
 
+  // Reset to page 1 when filters change
   useEffect(() => {
-    setCurrentPage(1);
+    setPage(1);
   }, [statusFilter, nameFilter]);
-
-  const filteredLeaves = leaves
-    .filter((leave: Leave) => {
-      if (statusFilter === 'ALL') return true;
-      return leave.status === statusFilter;
-    })
-    .filter((leave: Leave) => {
-      if (nameFilter === '') return true;
-      return leave.employeeName.toLowerCase().includes(nameFilter.toLowerCase());
-    });
-
-  // Pagination Logic
-  const indexOfLastRecord = currentPage * recordsPerPage;
-  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentRecords = filteredLeaves.slice(indexOfFirstRecord, indexOfLastRecord);
-  const totalPages = Math.ceil(filteredLeaves.length / recordsPerPage);
 
   let content;
 
   if (status === 'loading') {
     content = <div className="text-center p-5">Loading all leave requests...</div>;
   } else if (status === 'succeeded') {
-    // Pass the paginated records to the table
-    content = <LeaveTable leaves={currentRecords} isAdminView={true} />;
+    content = <LeaveTable leaves={leaves} isAdminView={true} />;
   } else if (status === 'failed') {
     content = <div className="alert alert-danger">Error: {error}</div>;
   }
@@ -105,8 +95,8 @@ export default function ReviewAllLeaves() {
 
         <Pagination
           totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={(page) => setCurrentPage(page)}
+          currentPage={page}
+          onPageChange={(newPage) => setPage(newPage)}
         />
       </div>
     </div>
